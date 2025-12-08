@@ -2,16 +2,20 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+
 }
 
-html {
-    scroll-behavior: smooth;
+html, body {
+  overflow-y: scroll;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  scroll-behavior: smooth;
 }
 
 body {
     font-family: 'Cairo', 'Tajawal', sans-serif !important;
     background-color: #ffffff !important;
-    color: #333;
+    color: #111827;
     line-height: 1.6;
     padding-bottom: 20px;
 }
@@ -21,14 +25,13 @@ main {
 }
 
 header {
-    /* background: linear-gradient(135deg, #2c3e50, #4a6491); */
-    color: #313131;
+    color: #111827;
     padding: 20px 0;
-    /* box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); */
-    border-bottom: #eaeaea 1px solid;
+    border-bottom: #e5e7eb 1px solid;
     position: sticky;
     top: 0;
     z-index: 100;
+    background: linear-gradient(to right, #f0f9ff, #ffffff);
 }
 
 .header-content {
@@ -49,11 +52,12 @@ header {
 .header-title h2 {
     font-weight: 700;
     font-size: 1.8rem;
+    color: #111827;
 }
 
 .bar {
-    background-color: #fff;
-    border-bottom: 1px solid #eaeaea;
+    background-color: #ffffff;
+    border-bottom: 1px solid #e5e7eb;
     padding: 0 7.5px;
 }
 
@@ -73,50 +77,60 @@ header {
 .item-link {
     text-decoration: none;
     color: #666;
-    /* padding: 10px 20px; */
     display: block;
-    /* border-radius: 8px; */
     transition: all 0.3s ease;
     font-weight: 400;
     font-size: 16px;
+    padding: 8px 0;
+    position: relative;
 }
 
 .item-link.active {
-    /* background-color: #3498db; */
-    border-bottom: 1px solid #333;
-    color: #333;
-    border-radius: 0;
+    color: #059669;
+    font-weight: 600;
+}
+
+.item-link.active:after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60%;
+    height: 3px;
+    background: #059669;
+    border-radius: 2px;
 }
 
 .item-link:hover {
-    background-color: #f0f0f0;
-    color: #2c3e50;
+    color: #047857;
+    transform: translateY(-2px);
 }
 
 .bourd {
     max-width: 1200px;
     margin: 20px auto;
-    /* padding: 0 20px; */
 }
 
 .content-if {
-    background-color: #fff;
+    background-color: #ffffff;
     border-radius: 16px;
-    /* box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08); */
     padding: 10px;
     margin-top: 10px;
+    border: 1px solid #e5e7eb;
 }
 
 .welcome-back-user h1 {
-    color: #2c3e50;
+    color: #111827;
     margin-bottom: 10px;
     font-size: 1.2rem;
+    font-weight: 700;
 }
 
 hr {
     border: none;
     height: 1px;
-    background-color: #eaeaea;
+    background-color: #e5e7eb;
     margin: 20px 0;
 }
 
@@ -129,22 +143,35 @@ hr {
 
 .sei-abady h4 {
     font-size: 1rem;
-    color: #2c3e50;
+    color: #111827;
+    font-weight: 600;
 }
 
 .sei-abady a {
-    color: #666;
+    color: #059669;
     text-decoration: none;
-    font-weight: 400;
+    font-weight: 500;
     font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+.sei-abady a:hover {
+    color: #047857;
+    text-decoration: underline;
 }
 
 .view-cat {
-    /* background-color: #f8f9fa; */
     border-radius: 12px;
     padding: 20px;
     margin-bottom: 30px;
-    border: 1px solid #eaeaea;
+    border: 2px solid #e5e7eb;
+    background: #f8fafc;
+    transition: all 0.3s ease;
+}
+
+.view-cat:hover {
+    border-color: #059669;
+    box-shadow: 0 4px 12px rgba(5, 150, 105, 0.1);
 }
 
 .cat-item {
@@ -154,7 +181,7 @@ hr {
 }
 
 .cat-item-icon {
-    background-color: #3498db;
+    background-color: #059669;
     color: white;
     width: 35px;
     height: 35px;
@@ -163,12 +190,14 @@ hr {
     align-items: center;
     justify-content: center;
     font-size: 0.8rem;
+    box-shadow: 0 2px 8px rgba(5, 150, 105, 0.3);
 }
 
 .cat-item-text h3 {
-    color: #2c3e50;
+    color: #111827;
     margin-bottom: 5px;
     font-size: 12.5px;
+    font-weight: 600;
 }
 
 .cat-item-text p {
@@ -177,18 +206,18 @@ hr {
 }
 
 .cat-groubs {
-    background-color: #f8f9fa;
+    background-color: #f8fafc;
     border-radius: 12px;
     padding: 5px;
-    /* text-align: center; */
     margin-bottom: 5px;
-    border: 1px solid #eaeaea;
+    border: 2px solid #e5e7eb;
 }
 
 .cat-groubs h2 {
-    color: #2c3e50;
-    font-weight: 550;
+    color: #111827;
+    font-weight: 600;
     font-size: 16px;
+    padding: 10px;
 }
 
 .tqadm {
@@ -199,29 +228,30 @@ hr {
 }
 
 .item-one {
-    background-color: #fff;
+    background-color: #ffffff;
     border-radius: 12px;
-    border: 1px solid #eaeaea;
+    border: 2px solid #e5e7eb;
     padding: 8px;
-    /* box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); */
-    transition: transform 0.3s ease;
+    transition: all 0.3s ease;
+    cursor: pointer;
 }
-/* 
+
 .item-one:hover {
-    transform: translateY(-5px);
-} */
+    border-color: #059669;
+    box-shadow: 0 6px 20px rgba(5, 150, 105, 0.15);
+}
 
 .item-one a {
     text-decoration: none;
-    color: #333;
+    color: #111827;
     display: flex;
     align-items: center;
     gap: 5px;
 }
 
 .item-one .icon {
-    background-color: #f0f7ff;
-    color: #3498db;
+    background-color: #f0f9ff;
+    color: #059669;
     width: 35px;
     height: 35px;
     border-radius: 50%;
@@ -229,10 +259,16 @@ hr {
     align-items: center;
     justify-content: center;
     font-size: 1.2rem;
+    transition: all 0.3s ease;
+}
+
+.item-one:hover .icon {
+    background-color: #059669;
+    color: white;
+    transform: scale(1.1);
 }
 
 .item-one .icon i {
-    color: #3498db;
     margin-top: 5px;
     font-size: 16px;
 }
@@ -240,8 +276,7 @@ hr {
 .done-item-one p {
     font-weight: 600;
     font-size: 12.5px;
-    /* margin-bottom: 5px; */
-    color: #2c3e50;
+    color: #111827;
 }
 
 .done-item-one span {
@@ -251,11 +286,17 @@ hr {
 }
 
 .hi-card {
-    background-color: #fff;
+    background-color: #ffffff;
     border-radius: 12px;
     padding: 10px;
     margin-bottom: 30px;
-    border: 1px solid #eaeaea;
+    border: 2px solid #e5e7eb;
+    transition: all 0.3s ease;
+}
+
+.hi-card:hover {
+    border-color: #059669;
+    box-shadow: 0 4px 12px rgba(5, 150, 105, 0.1);
 }
 
 .item-card {
@@ -265,13 +306,18 @@ hr {
 }
 
 .item-card i {
-    color: #27ae60;
+    color: #059669;
     font-size: 1.5rem;
+    transition: transform 0.3s ease;
+}
+
+.hi-card:hover .item-card i {
+    transform: scale(1.2);
 }
 
 .hi-ti p {
     font-weight: 600;
-    color: #2c3e50;
+    color: #111827;
     margin-bottom: 5px;
 }
 
@@ -289,7 +335,13 @@ hr {
 
 .totle-skills .bi {
     font-size: 2.5rem;
-    color: #3498db;
+    color: #059669;
+    transition: all 0.3s ease;
+}
+
+.totle-skills .bi:hover {
+    color: #047857;
+    transform: scale(1.2);
 }
 
 .Short-groubs {
@@ -313,7 +365,6 @@ hr {
         width: 100%;
     }
     
-    
     .tqadm {
         grid-template-columns: 1fr;
     }
@@ -335,7 +386,8 @@ hr {
     text-align: center;
     padding: 10px 0;
     box-shadow: 0 -5px 4px rgba(0, 0, 0, 0.1);
-    z-index: 1000; /* للتأكد من ظهوره فوق المحتوى */
+    z-index: 1000;
+    border-top: 1px solid #e5e7eb;
 }
 
 .nav-foot {
@@ -354,10 +406,68 @@ hr {
     color: #666;
     font-size: 24px;
     text-decoration: none;
-    transition: color 0.3s;
+    transition: all 0.3s ease;
+    padding: 5px 10px;
+    border-radius: 50%;
 }
 
 .item-foot a.bi-bar-chart-fill,
 .item-foot a:hover {
-    color: #667eea;
+    color: #059669;
+    background: rgba(5, 150, 105, 0.1);
+    transform: translateY(-5px);
+}
+
+.item-foot a.active {
+    color: #059669;
+    background: rgba(5, 150, 105, 0.15);
+    box-shadow: 0 4px 8px rgba(5, 150, 105, 0.2);
+}
+
+/* إضافة تأثيرات إضافية */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.content-if {
+    animation: fadeIn 0.5s ease-out;
+}
+
+.view-cat {
+    animation: fadeIn 0.6s ease-out;
+}
+
+.tqadm .item-one:nth-child(1) { animation-delay: 0.1s; }
+.tqadm .item-one:nth-child(2) { animation-delay: 0.2s; }
+.tqadm .item-one:nth-child(3) { animation-delay: 0.3s; }
+.tqadm .item-one:nth-child(4) { animation-delay: 0.4s; }
+
+/* تأثير للنصوص المهمة */
+
+.welcome-back-user h1:before,
+.sei-abady h4:before,
+.cat-groubs h2:before {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 4px;
+    height: 20px;
+    background: #059669;
+    border-radius: 2px;
+}
+
+/* تحسينات للشريط العلوي */
+.switch-bar {
+    background: #f8fafc;
+    border-radius: 0 0 12px 12px;
+    margin-top: -1px;
 }

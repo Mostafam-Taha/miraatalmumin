@@ -1,0 +1,887 @@
+/* إعدادات عامة */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Tajawal", sans-serif;
+}
+
+body {
+    background-color: #111827;
+    color: #ffffff;
+    line-height: 1.6;
+    padding: 20px;
+    min-height: 100vh;
+    background-image: radial-gradient(circle at 20% 30%, rgba(4, 120, 87, 0.1) 0%, transparent 20%),
+                      radial-gradient(circle at 80% 80%, rgba(5, 150, 105, 0.1) 0%, transparent 20%);
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 15px;
+}
+
+/* الترويسة */
+.header {
+    text-align: center;
+    margin-bottom: 40px;
+    padding: 20px 0;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 15px;
+    gap: 15px;
+}
+
+.logo i {
+    font-size: 2.5rem;
+    color: #059669;
+}
+
+.logo h1 {
+    font-size: 2rem;
+    color: #ffffff;
+}
+
+.page-title {
+    font-size: 2.2rem;
+    margin-bottom: 10px;
+    color: #ffffff;
+}
+
+.subtitle {
+    font-size: 1.1rem;
+    color: #94a3b8;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* حاوية الخطط */
+.plans-container {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 30px;
+    margin-bottom: 50px;
+}
+
+/* بطاقة الخطة */
+.plan-card {
+    background: linear-gradient(145deg, rgba(17, 24, 39, 0.9), rgba(5, 150, 105, 0.1));
+    border-radius: 15px;
+    padding: 30px;
+    width: 100%;
+    max-width: 400px;
+    border: 1px solid rgba(5, 150, 105, 0.3);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.plan-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 35px rgba(5, 150, 105, 0.2);
+    border-color: #059669;
+}
+
+.plan-card.yearly::before {
+    content: "الأفضل";
+    position: absolute;
+    top: 20px;
+    left: -35px;
+    background: #047857;
+    color: white;
+    padding: 5px 40px;
+    font-size: 0.9rem;
+    transform: rotate(-45deg);
+}
+
+.plan-header {
+    text-align: center;
+    margin-bottom: 25px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid rgba(5, 150, 105, 0.3);
+}
+
+.plan-title {
+    font-size: 1.6rem;
+    margin-bottom: 15px;
+    color: #059669;
+}
+
+.plan-price {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    margin-bottom: 5px;
+}
+
+.amount {
+    font-size: 3.5rem;
+    font-weight: bold;
+    color: #ffffff;
+}
+
+.currency {
+    font-size: 1.2rem;
+    color: #94a3b8;
+    margin-top: 10px;
+    margin-right: 5px;
+}
+
+.plan-period {
+    color: #94a3b8;
+    font-size: 0.9rem;
+}
+
+.discount-badge {
+    display: inline-block;
+    background: #047857;
+    color: white;
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    margin-top: 10px;
+}
+
+/* مميزات الخطة */
+.plan-features h4 {
+    font-size: 1.2rem;
+    margin-bottom: 15px;
+    color: #059669;
+    border-bottom: 1px solid rgba(5, 150, 105, 0.2);
+    padding-bottom: 8px;
+}
+
+.plan-features ul {
+    list-style: none;
+    margin-bottom: 30px;
+}
+
+.plan-features li {
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    display: flex;
+    align-items: center;
+}
+
+.plan-features li:last-child {
+    border-bottom: none;
+}
+
+.plan-features li i {
+    color: #059669;
+    margin-left: 10px;
+    width: 20px;
+    text-align: center;
+}
+
+/* أزرار */
+.select-plan-btn, .next-btn, .confirm-btn, .back-btn, .home-btn {
+    display: block;
+    width: 100%;
+    padding: 15px;
+    border: none;
+    border-radius: 10px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+}
+
+.select-plan-btn {
+    background: linear-gradient(90deg, #047857, #059669);
+    color: white;
+}
+
+.select-plan-btn:hover {
+    background: linear-gradient(90deg, #059669, #047857);
+    box-shadow: 0 5px 15px rgba(5, 150, 105, 0.4);
+}
+
+.next-btn, .confirm-btn {
+    background: linear-gradient(90deg, #047857, #059669);
+    color: white;
+    margin-top: 20px;
+}
+
+.next-btn:hover, .confirm-btn:hover {
+    background: linear-gradient(90deg, #059669, #047857);
+}
+
+.back-btn {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    border: 1px solid rgba(5, 150, 105, 0.5);
+}
+
+.back-btn:hover {
+    background: rgba(5, 150, 105, 0.2);
+}
+
+.home-btn {
+    background: linear-gradient(90deg, #047857, #059669);
+    color: white;
+    width: 200px;
+    margin: 20px auto 0;
+}
+
+/* نموذج الدفع */
+.payment-form-container, .receipt-container, .success-container {
+    background: rgba(17, 24, 39, 0.8);
+    border-radius: 15px;
+    padding: 30px;
+    margin: 30px auto;
+    max-width: 600px;
+    border: 1px solid rgba(5, 150, 105, 0.3);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+}
+
+.form-header {
+    text-align: center;
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid rgba(5, 150, 105, 0.3);
+}
+
+.form-header h3 {
+    font-size: 1.8rem;
+    color: #059669;
+    margin-bottom: 10px;
+}
+
+.form-group {
+    margin-bottom: 25px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 10px;
+    color: #059669;
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+.form-group label i {
+    margin-left: 8px;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(5, 150, 105, 0.5);
+    border-radius: 10px;
+    color: white;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: #059669;
+    box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.2);
+}
+
+/* طرق الدفع */
+.payment-methods {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.payment-method {
+    flex: 1;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(5, 150, 105, 0.3);
+    border-radius: 10px;
+    padding: 15px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.payment-method:hover {
+    background: rgba(5, 150, 105, 0.1);
+}
+
+.payment-method.selected {
+    background: rgba(5, 150, 105, 0.2);
+    border-color: #059669;
+}
+
+.payment-method i {
+    font-size: 1.5rem;
+    color: #059669;
+    margin-bottom: 10px;
+    display: block;
+}
+
+.payment-info {
+    background: rgba(5, 150, 105, 0.1);
+    padding: 15px;
+    border-radius: 10px;
+    border-right: 4px solid #059669;
+}
+
+.payment-info p {
+    margin-bottom: 8px;
+}
+
+/* منطقة الرفع */
+.upload-area {
+    border: 2px dashed #059669;
+    border-radius: 15px;
+    padding: 40px 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.upload-area:hover {
+    background: rgba(5, 150, 105, 0.05);
+    border-color: #047857;
+}
+
+.upload-area i {
+    font-size: 3rem;
+    color: #059669;
+    margin-bottom: 15px;
+    display: block;
+}
+
+.upload-area span {
+    color: #059669;
+    font-weight: bold;
+    text-decoration: underline;
+}
+
+.upload-area input {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.upload-note {
+    margin-top: 15px;
+    font-size: 0.9rem;
+    color: #94a3b8;
+}
+
+/* معاينة الصورة */
+.preview-container {
+    margin-top: 30px;
+}
+
+.image-preview {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.image-preview img {
+    width: 100%;
+    max-height: 300px;
+    object-fit: contain;
+    border-radius: 10px;
+    border: 1px solid rgba(5, 150, 105, 0.5);
+}
+
+.remove-image-btn {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+}
+
+/* حالة المعالجة */
+.processing-status {
+    text-align: center;
+    padding: 30px;
+    background: rgba(5, 150, 105, 0.1);
+    border-radius: 10px;
+    margin: 20px 0;
+}
+
+.spinner {
+    width: 50px;
+    height: 50px;
+    border: 5px solid rgba(5, 150, 105, 0.3);
+    border-top: 5px solid #059669;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 20px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* البيانات المستخرجة */
+.extracted-data {
+    background: rgba(5, 150, 105, 0.1);
+    padding: 20px;
+    border-radius: 10px;
+    margin-top: 20px;
+    border-right: 4px solid #059669;
+}
+
+.extracted-data h4 {
+    color: #059669;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+}
+
+.extracted-data h4 i {
+    margin-left: 10px;
+}
+
+.data-fields {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.data-field {
+    background: rgba(17, 24, 39, 0.7);
+    padding: 15px;
+    border-radius: 8px;
+}
+
+.data-field label {
+    display: block;
+    color: #94a3b8;
+    font-size: 0.9rem;
+    margin-bottom: 5px;
+}
+
+.data-field span {
+    font-weight: bold;
+    color: white;
+    font-size: 1.1rem;
+}
+
+/* رسالة النجاح */
+.success-container {
+    text-align: center;
+}
+
+.success-icon {
+    font-size: 5rem;
+    color: #059669;
+    margin-bottom: 20px;
+}
+
+.success-details {
+    background: rgba(5, 150, 105, 0.1);
+    padding: 20px;
+    border-radius: 10px;
+    margin: 25px 0;
+    text-align: right;
+}
+
+.success-details p {
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+}
+
+/* النافذة المنبثقة */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal {
+    background: linear-gradient(145deg, rgba(17, 24, 39, 0.95), rgba(5, 150, 105, 0.1));
+    border-radius: 15px;
+    padding: 30px;
+    width: 90%;
+    max-width: 500px;
+    border: 1px solid rgba(5, 150, 105, 0.5);
+    text-align: center;
+}
+
+.modal h3 {
+    color: #059669;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.modal p {
+    margin-bottom: 25px;
+    color: #94a3b8;
+}
+
+.modal-actions {
+    display: flex;
+    gap: 15px;
+}
+
+.modal-cancel, .modal-confirm {
+    flex: 1;
+    padding: 12px;
+    border-radius: 8px;
+    border: none;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.modal-cancel {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.modal-cancel:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.modal-confirm {
+    background: linear-gradient(90deg, #047857, #059669);
+    color: white;
+}
+
+.modal-confirm:hover {
+    background: linear-gradient(90deg, #059669, #047857);
+}
+
+/* التجاوب */
+@media (max-width: 768px) {
+    .plans-container {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .plan-card {
+        max-width: 100%;
+    }
+    
+    .payment-methods {
+        flex-direction: column;
+    }
+    
+    .data-fields {
+        grid-template-columns: 1fr;
+    }
+    
+    .page-title {
+        font-size: 1.8rem;
+    }
+    
+    .modal-actions {
+        flex-direction: column;
+    }
+}
+
+
+
+/* تحسينات إضافية لمعاينة الصورة */
+.image-preview {
+    position: relative;
+    margin-bottom: 20px;
+    overflow: hidden;
+    border-radius: 10px;
+    cursor: zoom-in;
+}
+
+.image-preview:hover::after {
+    content: 'انقر للتكبير';
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 0.8rem;
+}
+
+.image-preview img {
+    width: 100%;
+    max-height: 300px;
+    object-fit: contain;
+    border-radius: 10px;
+    border: 1px solid rgba(5, 150, 105, 0.5);
+    transition: transform 0.3s ease;
+}
+
+/* وضع التكبير للصورة */
+.image-preview.zoomed {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1001;
+    background: rgba(0, 0, 0, 0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: zoom-out;
+}
+
+.image-preview.zoomed img {
+    max-height: 90vh;
+    max-width: 90vw;
+    object-fit: contain;
+}
+
+/* رسالة تحسين الجودة */
+.quality-note {
+    background: rgba(255, 193, 7, 0.1);
+    border: 1px solid rgba(255, 193, 7, 0.3);
+    border-radius: 8px;
+    padding: 10px 15px;
+    margin: 15px 0;
+    color: #ffc107;
+    font-size: 0.9rem;
+    text-align: center;
+}
+
+.quality-note i {
+    margin-left: 8px;
+}
+
+/* إضافة مؤشر جودة الصورة */
+.quality-indicator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 10px 0;
+    gap: 10px;
+}
+
+.quality-bar {
+    width: 100px;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.quality-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #047857, #059669);
+    width: 0%;
+    transition: width 1s ease;
+}
+
+/* تحسينات للبيانات المستخرجة */
+.data-field.highlighted {
+    background: rgba(5, 150, 105, 0.2);
+    border: 1px solid rgba(5, 150, 105, 0.5);
+}
+
+.data-field.highlighted label {
+    color: #059669;
+    font-weight: bold;
+}
+
+.data-field.highlighted span {
+    color: #ffffff;
+    font-size: 1.2rem;
+}
+
+/* تحسين زر الإزالة */
+.remove-image-btn:hover {
+    background: rgba(220, 38, 38, 0.9);
+    transform: rotate(90deg);
+    transition: all 0.3s ease;
+}
+
+/* تحسين شريط التقدم */
+.progress-text {
+    margin-top: 10px;
+    color: #059669;
+    font-weight: bold;
+}
+
+/* مؤشر جودة التعرف */
+.recognition-confidence {
+    display: inline-block;
+    padding: 3px 8px;
+    background: rgba(5, 150, 105, 0.2);
+    border-radius: 12px;
+    font-size: 0.8rem;
+    margin-right: 8px;
+}
+
+
+/* مؤشر الثقة */
+.confidence-indicator {
+    background: rgba(5, 150, 105, 0.1);
+    padding: 10px 15px;
+    border-radius: 8px;
+    margin: 15px 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-right: 3px solid #059669;
+}
+
+.confidence-indicator i {
+    color: #059669;
+}
+
+/* تلوين الحقول */
+.data-field.highlighted {
+    background: rgba(5, 150, 105, 0.15);
+    border: 1px solid rgba(5, 150, 105, 0.5);
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(5, 150, 105, 0.4); }
+    70% { box-shadow: 0 0 0 10px rgba(5, 150, 105, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(5, 150, 105, 0); }
+}
+
+.data-field.highlighted label {
+    color: #059669;
+    font-weight: bold;
+}
+
+.data-field.highlighted span {
+    color: #ffffff;
+    font-weight: bold;
+}
+
+/* تحسين عرض نوع العملية */
+#extractedType {
+    background: rgba(147, 51, 234, 0.1);
+    padding: 5px 10px;
+    border-radius: 5px;
+    display: inline-block;
+    color: #9333ea;
+    font-weight: bold;
+}
+
+/* زر التعديل اليدوي */
+.edit-data-btn {
+    background: rgba(59, 130, 246, 0.1);
+    color: #3b82f6;
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+    font-size: 0.9rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    transition: all 0.3s ease;
+}
+
+.edit-data-btn:hover {
+    background: rgba(59, 130, 246, 0.2);
+}
+
+/* نافذة التعديل */
+.edit-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.edit-modal-content {
+    background: linear-gradient(145deg, rgba(17, 24, 39, 0.95), rgba(5, 150, 105, 0.1));
+    border-radius: 15px;
+    padding: 30px;
+    width: 90%;
+    max-width: 500px;
+    border: 1px solid rgba(5, 150, 105, 0.5);
+}
+
+.edit-modal h3 {
+    color: #059669;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.edit-field {
+    margin-bottom: 15px;
+}
+
+.edit-field label {
+    display: block;
+    margin-bottom: 5px;
+    color: #94a3b8;
+}
+
+.edit-field input {
+    width: 100%;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(5, 150, 105, 0.5);
+    border-radius: 5px;
+    color: white;
+}
+
+.edit-modal-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.edit-cancel, .edit-save {
+    flex: 1;
+    padding: 10px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.edit-cancel {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+}
+
+.edit-save {
+    background: linear-gradient(90deg, #047857, #059669);
+    color: white;
+}

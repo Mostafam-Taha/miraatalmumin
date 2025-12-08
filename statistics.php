@@ -71,7 +71,7 @@ if (isset($_SESSION['user_id']) && !isset($_SESSION['username'])) {
             <div class="welcome-back-user">
                 <h1>السلام عليكم <?php echo htmlspecialchars($_SESSION['username'] ?? 'مستخدم'); ?>!</h1>
                 <hr>
-                <div class="al-ebadat">
+                <div class="al-ebadat" id="al-ebadat">
                     <div class="sei-abady">
                         <h4>أهداف اليوم</h4>
                         <a href="#">إظهار الكل</a>
@@ -207,7 +207,7 @@ if (isset($_SESSION['user_id']) && !isset($_SESSION['username'])) {
                 </div>
                 <div class="tqadm">
                     <div class="item-one">
-                        <a href="#">
+                        <a href="#al-ebadat">
                             <div class="icon">
                                 <i class="bi bi-person-walking"></i>
                             </div>
@@ -229,7 +229,7 @@ if (isset($_SESSION['user_id']) && !isset($_SESSION['username'])) {
                         </a>
                     </div>
                     <div class="item-one">
-                        <a href="#">
+                        <a href="#al-ebadat">
                             <div class="icon">
                                 <i class="bi bi-person-standing"></i>
                             </div>
@@ -240,7 +240,7 @@ if (isset($_SESSION['user_id']) && !isset($_SESSION['username'])) {
                         </a>
                     </div>
                     <div class="item-one">
-                        <a href="#">
+                        <a href="prayer_plans.php">
                             <div class="icon">
                                 <i class="bi bi-x-lg"></i>
                             </div>
@@ -350,8 +350,8 @@ if (isset($_SESSION['user_id']) && !isset($_SESSION['username'])) {
     <footer class="footer">
         <nav class="nav-foot">
             <ul class="list-foot">
-                <li class="item-foot"><a href="index.php" class="bi bi-house-fill active"></a></li>
-                <li class="item-foot"><a href="statistics.php" class="bi bi-bar-chart-fill"></a></li>
+                <li class="item-foot"><a href="index.php" class="bi bi-house-fill"></a></li>
+                <li class="item-foot"><a href="statistics.php" class="bi bi-bar-chart-fill active"></a></li>
                 <li class="item-foot"><a href="reminder.php" class="bi bi-bell-fill"></a></li>
                 <li class="item-foot"><a href="profile.php" class="bi bi-person-fill"></a></li>
             </ul>

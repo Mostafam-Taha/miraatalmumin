@@ -14,3 +14,4 @@ try {
 // تعريف مسار الموقع
 define('SITE_URL', 'https://' . $_SERVER['HTTP_HOST'] . rtrim(dirname($_SERVER['PHP_SELF']), '/\\'));
 ?>
+

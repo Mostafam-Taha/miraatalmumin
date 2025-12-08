@@ -9,10 +9,15 @@ require_once 'includes/config.php';
 require_once 'api/hijri_date.php';
 
 $user_id = $_SESSION['user_id'];
-$selected_date = isset($_GET['date']) ? $_GET['date'] : date('Y-m-d');
 $today = date('Y-m-d');
 
-$is_future_date = ($selected_date > $today);
+// اليوم يبدأ من 00:00 (12:00 AM)
+$selected_date = isset($_GET['date']) ? $_GET['date'] : $today;
+
+// التحقق إذا كان التاريخ مستقبلياً
+$today_timestamp = strtotime($today);
+$selected_timestamp = strtotime($selected_date);
+$is_future_date = ($selected_timestamp > $today_timestamp);
 
 if ($is_future_date) {
     $prayer_records = [];
@@ -65,6 +70,44 @@ $nawafil_info = [
     <link rel="stylesheet" href="assets/css/styles.css">
     <link rel="stylesheet" href="assets/css/prayer.css">
     <title>الرئيسية | مرآة المؤمن</title>
+    <style>
+        
+        .future-date {
+            opacity: 0.6;
+            background-color: #f3f4f6 !important;
+            border: 1px dashed #d1d5db !important;
+            cursor: not-allowed;
+        }
+    </style>
+    <script>
+        // تعريف الدوال هنا في البداية
+        function changeDate(days) {
+            const date = new Date(selectedDate);
+            date.setDate(date.getDate() + days);
+            
+            // التحقق إذا كان التاريخ الجديد مستقبلياً
+            const newDateString = date.toISOString().split('T')[0];
+            const newDateObj = new Date(newDateString);
+            const todayObj = new Date(today);
+            
+            if (newDateObj > todayObj) {
+                alert('لا يمكن تسجيل الصلوات لتاريخ مستقبلي. يمكنك فقط عرض الصلوات.');
+                return;
+            }
+            
+            selectDate(newDateString);
+        }
+        
+        function selectDate(date) {
+            // تحديث الصفحة بالتاريخ الجديد
+            window.location.href = `index.php?date=${date}`;
+        }
+        
+        function goToToday() {
+            // العودة إلى اليوم الحالي
+            window.location.href = `index.php?date=${today}`;
+        }
+    </script>
 </head>
 <body>
     <header class="header">
@@ -79,12 +122,17 @@ $nawafil_info = [
         </nav>
     </header>
 
+    <div class="date-header" style="display: none;">
+        <h2>اليوم: <?php echo date('Y-m-d', strtotime($selected_date)); ?></h2>
+        <?php if ($hijri_date): ?>
+        <div class="hijri"><?php echo $hijri_date; ?></div>
+        <?php endif; ?>
+    </div>
+
     <div class="date-navigation">
         <div class="date-controls">
             <button class="nav-btn" onclick="changeDate(-1)"><i class="bi bi-chevron-right"></i></button>
-            <div class="current-date">
-                <div class="gregorian-date" id="currentDate"><?php echo date('Y-m-d', strtotime($selected_date)); ?></div>
-            </div>
+            <button class="nav-btn nt-one" onclick="goToToday()">اليوم</button>
             <button class="nav-btn" onclick="changeDate(1)"><i class="bi bi-chevron-left"></i></button>
         </div>
         
@@ -95,7 +143,7 @@ $nawafil_info = [
         </div>
     </div>
 
-    <section class="content">
+    <section class="content" style="padding-bottom: 0px;">
         <?php foreach ($prayer_times as $prayer => $time): ?>
         <div class="prayer-list">
             <div class="card-py" data-prayer="<?php echo $prayer; ?>">
@@ -179,6 +227,23 @@ $nawafil_info = [
         </div>
     </div>
 
+    <section class="content" style="padding: 8px 10px 70px 10px;">
+        <!-- بطاقات الصلاة تبقى كما هي -->
+        <?php foreach ($prayer_times as $prayer => $time): ?>
+        <div class="prayer-list">
+            <!-- ... -->
+        </div>
+        <?php endforeach; ?>
+        
+        <!-- زر التغذية الراجعة في المنتصف -->
+        <div class="feedback-link-container">
+            <button class="feedback-link" onclick="openFeedbackModal()">
+                <i class="bi bi-chat-left-text"></i>
+                تقييم واقتراحات
+            </button>
+        </div>
+    </section>
+
     <footer class="footer">
         <nav class="nav-foot">
             <ul class="list-foot">
@@ -190,9 +255,87 @@ $nawafil_info = [
         </nav>
     </footer>
 
+
+        <!-- نافذة التغذية الراجعة -->
+    <div class="feedback-modal" id="feedbackModal" >
+        <div class="feedback-content">
+            <div class="feedback-header">
+                <button class="feedback-close" onclick="closeFeedbackModal()">&times;</button>
+                <h3 id="feedbackTitle">تقييم واقتراحات</h3>
+                <p id="feedbackSubtitle">شاركنا رأيك لنساعدك بشكل أفضل</p>
+            </div>
+            
+            <div class="feedback-body" id="feedbackForm">
+                <!-- رسالة المعلومات -->
+                <div class="message-info">
+                    <i class="bi bi-info-circle"></i>
+                    <span>نقدر ملاحظاتك ونعدك بالتحسين المستمر</span>
+                </div>
+                
+                <!-- اختيار نوع التغذية الراجعة -->
+                <div class="feedback-type-selector">
+                    <button type="button" class="feedback-type-btn" onclick="selectFeedbackType('suggestion')">
+                        <i class="bi bi-lightbulb"></i>
+                        <span>اقتراح</span>
+                    </button>
+                    <button type="button" class="feedback-type-btn" onclick="selectFeedbackType('complaint')">
+                        <i class="bi bi-exclamation-triangle"></i>
+                        <span>شكوى</span>
+                    </button>
+                    <button type="button" class="feedback-type-btn" onclick="selectFeedbackType('bug')">
+                        <i class="bi bi-bug"></i>
+                        <span>خطأ</span>
+                    </button>
+                    <button type="button" class="feedback-type-btn" onclick="selectFeedbackType('thanks')">
+                        <i class="bi bi-heart"></i>
+                        <span>شكر</span>
+                    </button>
+                </div>
+                
+                <!-- حقل الرسالة -->
+                <div class="feedback-message-container">
+                    <textarea 
+                        class="feedback-textarea" 
+                        id="feedbackMessage" 
+                        placeholder="اكتب رسالتك هنا... (اختياري)"
+                        maxlength="1000"></textarea>
+                    <div style="text-align: left; margin-top: 5px; font-size: 12px; color: #6b7280;">
+                        <span id="charCount">0</span>/1000 حرف
+                    </div>
+                </div>
+                
+                <!-- أزرار الإجراء -->
+                <div class="feedback-actions">
+                    <button class="feedback-cancel-btn" onclick="closeFeedbackModal()">
+                        إلغاء
+                    </button>
+                    <button class="feedback-submit-btn" id="submitFeedbackBtn" onclick="submitFeedback()" disabled>
+                        <i class="bi bi-send"></i>
+                        إرسال
+                    </button>
+                </div>
+            </div>
+            
+            <!-- عرض رسالة النجاح -->
+            <div class="feedback-success" id="feedbackSuccess" style="display: none;">
+                <i class="bi bi-check-circle"></i>
+                <h4>تم الإرسال بنجاح!</h4>
+                <p>شكراً لك على مشاركة رأيك. سنعمل على تحسين التطبيق بناءً على ملاحظاتك.
+                    سيتم التواصل معك على البريد الإلكتروني الخاص بك.
+                </p>
+                <button class="feedback-cancel-btn" onclick="closeFeedbackModal()" style="margin-top: 20px;">
+                    إغلاق
+                </button>
+            </div>
+        </div>
+    </div>
+
+
     <script>
+        // تعريف المتغيرات العالمية
         let currentPrayer = '';
         let selectedDate = '<?php echo $selected_date; ?>';
+        let today = '<?php echo $today; ?>';
         let selectedNawafil = [];
         let nawafilInfo = <?php echo json_encode($nawafil_info); ?>;
         
@@ -202,6 +345,8 @@ $nawafil_info = [
             grid.innerHTML = '';
             
             const days = ['أحد', 'اثنين', 'ثلاثاء', 'أربعاء', 'خميس', 'جمعة', 'سبت'];
+            const todayObj = new Date(today);
+            const selectedDateObj = new Date(selectedDate);
             
             // إنشاء 15 يوماً (7 أيام قبل، اليوم الحالي، 7 أيام بعد)
             for (let i = -7; i <= 7; i++) {
@@ -210,8 +355,23 @@ $nawafil_info = [
                 
                 const dateItem = document.createElement('div');
                 dateItem.className = 'date-item';
-                if (i === 0) {
+                
+                // تحديد إذا كان هذا التاريخ هو المحدد
+                const dateString = date.toISOString().split('T')[0];
+                if (dateString === selectedDate) {
                     dateItem.classList.add('selected');
+                }
+                
+                // تحديد إذا كان هذا التاريخ هو اليوم الحالي
+                if (dateString === today) {
+                    dateItem.classList.add('today-marker');
+                }
+                
+                // تحديد إذا كان هذا التاريخ مستقبلياً
+                const dateTimestamp = date.getTime();
+                const todayTimestamp = todayObj.getTime();
+                if (dateTimestamp > todayTimestamp) {
+                    dateItem.classList.add('future-date');
                 }
                 
                 const dayName = days[date.getDay()];
@@ -219,7 +379,6 @@ $nawafil_info = [
                 const monthNames = ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو',
                                    'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'];
                 const monthName = monthNames[date.getMonth()];
-                const dateString = date.toISOString().split('T')[0];
                 
                 dateItem.innerHTML = `
                     <div class="date-day">${dayName}</div>
@@ -228,6 +387,10 @@ $nawafil_info = [
                 `;
                 
                 dateItem.onclick = function() {
+                    if (this.classList.contains('future-date')) {
+                        alert('لا يمكن تسجيل الصلوات لتاريخ مستقبلي. يمكنك فقط عرض الصلوات.');
+                        return;
+                    }
                     selectDate(dateString);
                 };
                 
@@ -241,45 +404,17 @@ $nawafil_info = [
             }
         }
         
-        // وفي دالة selectDate أيضاً، يمكنك إضافة تنبيه
-        function selectDate(date) {
-            const today = new Date().toISOString().split('T')[0];
-            
-            if (date > today) {
-                // alert('لا يمكن تسجيل الصلوات لتاريخ مستقبلي. يمكنك فقط عرض الصلوات السابقة أو الحالية.');
-                // يمكنك إما:
-                // 1. عدم السماح بالتنقل (return)
-                // return;
-                
-                // أو 2. السماح بالتنقل ولكن مع تنبيه
-                // window.location.href = `index.php?date=${date}`;
-                
-                // أو 3. السماح بالتنقل فقط للعرض دون التعديل
-                window.location.href = `index.php?date=${date}&view=only`;
-                return;
-            }
-            
-            // تحديث الصفحة بالتاريخ الجديد
-            window.location.href = `index.php?date=${date}`;
-        }
-        
-        function changeDate(days) {
-            const date = new Date(selectedDate);
-            date.setDate(date.getDate() + days);
-            selectDate(date.toISOString().split('T')[0]);
-        }
-        
-        // events.js (أو ضمن الـ script في الصفحة)
+        // إضافة حدث النقر على بطاقات الصلاة
         document.querySelectorAll('.card-py').forEach(card => {
             card.addEventListener('click', function() {
                 const prayer = this.dataset.prayer;
                 
                 // التحقق إذا كان التاريخ مستقبلياً
                 const selectedDate = '<?php echo $selected_date; ?>';
-                const today = new Date().toISOString().split('T')[0]; // التاريخ الحالي بصيغة YYYY-MM-DD
+                const today = '<?php echo $today; ?>';
                 
                 if (selectedDate > today) {
-                    alert('لا يمكن تسجيل الصلوات لتاريخ مستقبلي');
+                    alert('لا يمكن تسجيل الصلوات لتاريخ مستقبلي. يمكنك فقط عرض الصلوات.');
                     return;
                 }
                 
@@ -412,6 +547,179 @@ $nawafil_info = [
         
         // توليد شريط التواريخ عند تحميل الصفحة
         window.addEventListener('DOMContentLoaded', generateDateGrid);
+        
+        // تحديث اليوم الحالي كل ساعة
+        setInterval(() => {
+            const now = new Date();
+            const currentDate = now.toISOString().split('T')[0];
+            
+            if (currentDate !== today) {
+                // إذا تغير اليوم، نعيد تحميل الصفحة
+                window.location.reload();
+            }
+        }, 3600000); // كل ساعة
+
+
+        // تعريف المتغيرات للتغذية الراجعة
+        let selectedFeedbackType = '';
+        let selectedFeedbackIcon = '';
+        
+        // دالة فتح نافذة التغذية الراجعة
+        function openFeedbackModal() {
+            // إعادة تعيين النموذج
+            resetFeedbackForm();
+            document.getElementById('feedbackModal').style.display = 'flex';
+        }
+        
+        // دالة إغلاق نافذة التغذية الراجعة
+        function closeFeedbackModal() {
+            document.getElementById('feedbackModal').style.display = 'none';
+            setTimeout(resetFeedbackForm, 300);
+        }
+        
+        // دالة إعادة تعيين النموذج
+        function resetFeedbackForm() {
+            selectedFeedbackType = '';
+            selectedFeedbackIcon = '';
+            
+            // إلغاء تحديد جميع الأزرار
+            document.querySelectorAll('.feedback-type-btn').forEach(btn => {
+                btn.classList.remove('selected');
+            });
+            
+            // إعادة تعيين الرسالة
+            document.getElementById('feedbackMessage').value = '';
+            document.getElementById('charCount').textContent = '0';
+            
+            // إعادة تعيين العنوان
+            document.getElementById('feedbackTitle').textContent = 'تقييم واقتراحات';
+            document.getElementById('feedbackSubtitle').textContent = 'شاركنا رأيك لنساعدك بشكل أفضل';
+            
+            // إعادة تعيين زر الإرسال
+            document.getElementById('submitFeedbackBtn').disabled = true;
+            document.getElementById('submitFeedbackBtn').innerHTML = '<i class="bi bi-send"></i> إرسال';
+            
+            // إظهار النموذج وإخفاء رسالة النجاح
+            document.getElementById('feedbackForm').style.display = 'block';
+            document.getElementById('feedbackSuccess').style.display = 'none';
+        }
+        
+        // دالة اختيار نوع التغذية الراجعة
+        function selectFeedbackType(type) {
+            // إلغاء تحديد جميع الأزرار
+            document.querySelectorAll('.feedback-type-btn').forEach(btn => {
+                btn.classList.remove('selected');
+            });
+            
+            // تحديد الزر المختار
+            const selectedBtn = document.querySelector(`.feedback-type-btn:nth-child(${getTypeIndex(type)})`);
+            selectedBtn.classList.add('selected');
+            
+            selectedFeedbackType = type;
+            
+            // تحديث العنوان بناءً على النوع المختار
+            const titles = {
+                'suggestion': { title: 'اقتراح', subtitle: 'شاركنا أفكارك لتحسين التطبيق' },
+                'complaint': { title: 'شكوى', subtitle: 'نعتذر عن أي إزعاج، كيف يمكننا المساعدة؟' },
+                'bug': { title: 'تبليغ عن خطأ', subtitle: 'ساعدنا في تحسين التطبيق بالإبلاغ عن المشكلة' },
+                'thanks': { title: 'شكر وتقدير', subtitle: 'نشكرك على ثقتك ودعمك لنا' }
+            };
+            
+            document.getElementById('feedbackTitle').textContent = titles[type].title;
+            document.getElementById('feedbackSubtitle').textContent = titles[type].subtitle;
+            
+            // تفعيل زر الإرسال
+            document.getElementById('submitFeedbackBtn').disabled = false;
+        }
+        
+        // دالة للحصول على ترتيب الزر بناءً على النوع
+        function getTypeIndex(type) {
+            const types = ['suggestion', 'complaint', 'bug', 'thanks'];
+            return types.indexOf(type) + 1;
+        }
+        
+        // تحديث عداد الأحرف
+        document.getElementById('feedbackMessage').addEventListener('input', function() {
+            const charCount = this.value.length;
+            document.getElementById('charCount').textContent = charCount;
+            
+            // تغيير اللون إذا تجاوز الحد
+            if (charCount > 1000) {
+                this.style.borderColor = '#ef4444';
+            } else {
+                this.style.borderColor = '#059669';
+            }
+        });
+        
+        // دالة إرسال التغذية الراجعة
+        async function submitFeedback() {
+            const message = document.getElementById('feedbackMessage').value;
+            
+            // التحقق من أن النوع قد تم اختياره
+            if (!selectedFeedbackType) {
+                alert('الرجاء اختيار نوع الرسالة');
+                return;
+            }
+            
+            // تعطيل زر الإرسال أثناء المعالجة
+            const submitBtn = document.getElementById('submitFeedbackBtn');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> جاري الإرسال...';
+            
+            try {
+                // إرسال البيانات إلى الخادم
+                const response = await fetch('api/submit_feedback.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        type: selectedFeedbackType,
+                        message: message,
+                        user_id: <?php echo $_SESSION['user_id']; ?>,
+                        user_name: '<?php echo $_SESSION['user_name']; ?>',
+                        user_email: '<?php echo $_SESSION['user_email']; ?>'
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    // عرض رسالة النجاح
+                    document.getElementById('feedbackForm').style.display = 'none';
+                    document.getElementById('feedbackSuccess').style.display = 'block';
+                    
+                    // إغلاق النافذة تلقائياً بعد 3 ثواني
+                    setTimeout(() => {
+                        closeFeedbackModal();
+                    }, 3000);
+                } else {
+                    alert('حدث خطأ أثناء الإرسال: ' + (data.message || 'يرجى المحاولة مرة أخرى'));
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = '<i class="bi bi-send"></i> إرسال';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('حدث خطأ في الاتصال بالخادم');
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="bi bi-send"></i> إرسال';
+            }
+        }
+        
+        // إغلاق النافذة بالضغط على ESC
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeFeedbackModal();
+            }
+        });
+        
+        // إغلاق النافذة بالضغط خارجها
+        document.getElementById('feedbackModal').addEventListener('click', function(event) {
+            if (event.target === this) {
+                closeFeedbackModal();
+            }
+        });
+        
     </script>
 </body>
 </html>

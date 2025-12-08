@@ -15,6 +15,13 @@
             font-family: "Tajawal", sans-serif;
         }
 
+        html, body {
+            overflow-y: scroll;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            scroll-behavior: smooth;
+        }
+
         :root {
             --button-color: #059669;
             --text-color: #111827;
@@ -389,6 +396,50 @@
             font-size: 14px;
             border-top: 1px solid var(--border-color);
         }
+
+                /* Telegram specific styles */
+        .telegram-status {
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-right: 10px;
+        }
+        
+        .status-connected {
+            background-color: #05966920;
+            color: #059669;
+        }
+        
+        .status-disconnected {
+            background-color: #dc262620;
+            color: #dc2626;
+        }
+        
+        .test-btn {
+            background-color: #0ea5e9;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background-color 0.2s;
+        }
+        
+        .test-btn:hover {
+            background-color: #0284c7;
+        }
+        
+        .token-display {
+            background-color: #f3f4f6;
+            padding: 10px;
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 14px;
+            word-break: break-all;
+            margin-bottom: 10px;
+        }
     </style>
 </head>
 <body>
@@ -494,6 +545,30 @@
                             <input type="checkbox" id="block-all-groups-toggle" 
                                 onchange="toggleBlockGroups(this.checked)">
                             <span class="toggle-slider"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+                        <!-- ربط Telegram -->
+            <div class="settings-section">
+                <div class="section-header">
+                    <h2>ربط حسابك على مرآة المؤمن</h2>
+                </div>
+                <div class="settings-items">
+                    <div class="setting-item" onclick="openModal('telegram')">
+                        <div class="item-info">
+                            <div class="item-icon">
+                                <i class="fab fa-telegram"></i>
+                            </div>
+                            <div class="item-text">
+                                <h3>ربط حساب Telegram</h3>
+                                <p>Token البوت و Chat ID</p>
+                            </div>
+                        </div>
+                        <div class="item-arrow">
+                            <i class="fas fa-chevron-left"></i>
                         </div>
                     </div>
                 </div>
@@ -760,6 +835,82 @@
         </div>
     </div>
 
+        <!-- Modal for Telegram -->
+    <div id="telegram-modal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h2><i class="fab fa-telegram"></i> ربط حساب Telegram</h2>
+                <button class="close-modal" onclick="closeModal('telegram')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-content">
+                <div class="modal-section">
+                    <h3>إعدادات ربط Telegram</h3>
+                    <div style="background-color: #e0f2fe; padding: 15px; border-radius: 8px; margin-bottom: 20px; border-right: 4px solid #0ea5e9;">
+                        <p><strong>كيفية الحصول على Token:</strong></p>
+                        <ol style="padding-right: 20px;">
+                            <li style="margin-bottom: 8px;">ابحث عن <strong>@BotFather</strong> في Telegram</li>
+                            <li style="margin-bottom: 8px;">أرسل الأمر <code>/newbot</code></li>
+                            <li style="margin-bottom: 8px;">اختر اسمًا للبوت</li>
+                            <li style="margin-bottom: 8px;">انسخ الـ Token الذي سيعطيه لك BotFather</li>
+                        </ol>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="telegram-token">Token البوت <span style="color: #dc2626;">*</span></label>
+                        <input type="password" class="form-control" id="telegram-token" placeholder="أدخل token البوت هنا">
+                        <small style="color: #6b7280; display: block; margin-top: 5px;">مثال: 1234567890:ABCdefGHIjklMnOpQRstUVwxyz</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="bot-name">اسم البوت (اختياري)</label>
+                        <input type="text" class="form-control" id="bot-name" placeholder="اسم البوت">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="chat-id">Chat ID</label>
+                        <div class="token-display" id="chat-id-display">لم يتم التعرف بعد</div>
+                        <button type="button" class="test-btn" onclick="detectChatId()">
+                            <i class="fas fa-search"></i> التعرف التلقائي على Chat ID
+                        </button>
+                        <small style="color: #6b7280; display: block; margin-top: 5px;">
+                            Chat ID سيتم تعبئته تلقائيًا بعد إدخال Token الصحيح
+                        </small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <div class="checkbox-group">
+                            <label for="enable-notifications">تفعيل الإشعارات</label>
+                            <input type="checkbox" id="enable-notifications" checked>
+                        </div>
+                        
+                        <div class="checkbox-group">
+                            <label for="enable-backups">تفعيل النسخ الاحتياطي عبر Telegram</label>
+                            <input type="checkbox" id="enable-backups">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group" id="connection-status" style="display: none;">
+                        <div style="padding: 10px; border-radius: 6px; background-color: #f3f4f6; text-align: center;">
+                            <span id="status-icon"></span>
+                            <span id="status-text"></span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="modal-actions">
+                    <button class="btn btn-secondary" onclick="closeModal('telegram')">إلغاء</button>
+                    <button class="btn btn-primary" onclick="saveTelegramSettings()" id="save-telegram-btn">
+                        <i class="fas fa-save"></i> حفظ الإعدادات
+                    </button>
+                    <button class="btn" onclick="testTelegramConnection()" id="test-telegram-btn" style="background-color: #0ea5e9; color: white;">
+                        <i class="fas fa-paper-plane"></i> اختبار الاتصال
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script>
         // وظيفة لفتح النافذة المنبثقة
@@ -1059,6 +1210,290 @@
             }
         `;
         document.head.appendChild(style);
+
+
+
+
+                // Telegram Settings Functions
+        let telegramSettings = {
+            token: '',
+            botName: '',
+            chatId: '',
+            enabled: false
+        };
+
+        // تحميل إعدادات Telegram عند فتح الصفحة
+        async function loadTelegramSettings() {
+            try {
+                const response = await fetch('settings/get_telegram_settings.php');
+                const data = await response.json();
+                
+                if (data.success && data.settings) {
+                    telegramSettings = data.settings;
+                    
+                    // تحديث واجهة المستخدم إذا كان Modal مفتوحًا
+                    if (document.getElementById('telegram-modal').style.display === 'flex') {
+                        updateTelegramModal();
+                    }
+                    
+                    // تحديث حالة الربط في القائمة الرئيسية
+                    updateTelegramStatus();
+                }
+            } catch (error) {
+                console.error('Error loading Telegram settings:', error);
+            }
+        }
+
+        // تحديث واجهة Telegram Modal
+        function updateTelegramModal() {
+            document.getElementById('telegram-token').value = telegramSettings.token || '';
+            document.getElementById('bot-name').value = telegramSettings.botName || '';
+            
+            if (telegramSettings.chatId) {
+                document.getElementById('chat-id-display').textContent = telegramSettings.chatId;
+            }
+            
+            document.getElementById('enable-notifications').checked = telegramSettings.enableNotifications || true;
+            document.getElementById('enable-backups').checked = telegramSettings.enableBackups || false;
+            
+            updateConnectionStatus();
+        }
+
+        // تحديث حالة الربط
+        function updateTelegramStatus() {
+            const telegramItem = document.querySelector('.setting-item[onclick="openModal(\'telegram\')"]');
+            if (!telegramItem) return;
+            
+            let statusElement = telegramItem.querySelector('.telegram-status');
+            if (!statusElement) {
+                statusElement = document.createElement('span');
+                statusElement.className = 'telegram-status';
+                telegramItem.querySelector('.item-info').appendChild(statusElement);
+            }
+            
+            if (telegramSettings.token && telegramSettings.chatId) {
+                statusElement.textContent = '✓ متصل';
+                statusElement.className = 'telegram-status status-connected';
+            } else {
+                statusElement.textContent = '✗ غير متصل';
+                statusElement.className = 'telegram-status status-disconnected';
+            }
+        }
+
+        // حفظ إعدادات Telegram
+        async function saveTelegramSettings() {
+            const token = document.getElementById('telegram-token').value.trim();
+            const botName = document.getElementById('bot-name').value.trim();
+            
+            if (!token) {
+                showNotification('يرجى إدخال Token البوت', 'error');
+                return;
+            }
+            
+            const saveBtn = document.getElementById('save-telegram-btn');
+            const originalText = saveBtn.innerHTML;
+            saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري الحفظ...';
+            saveBtn.disabled = true;
+            
+            try {
+                const response = await fetch('settings/save_telegram_settings.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        token: token,
+                        bot_name: botName,
+                        chat_id: telegramSettings.chatId || '',
+                        enable_notifications: document.getElementById('enable-notifications').checked,
+                        enable_backups: document.getElementById('enable-backups').checked
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    telegramSettings = data.settings;
+                    showNotification('تم حفظ إعدادات Telegram بنجاح', 'success');
+                    updateTelegramStatus();
+                } else {
+                    showNotification(data.message || 'حدث خطأ في حفظ الإعدادات', 'error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showNotification('حدث خطأ في الاتصال بالخادم', 'error');
+            } finally {
+                saveBtn.innerHTML = originalText;
+                saveBtn.disabled = false;
+            }
+        }
+
+        // التعرف التلقائي على Chat ID
+        async function detectChatId() {
+            const token = document.getElementById('telegram-token').value.trim();
+            
+            if (!token) {
+                showNotification('يرجى إدخال Token البوت أولاً', 'error');
+                return;
+            }
+            
+            const detectBtn = document.querySelector('.test-btn[onclick="detectChatId()"]');
+            const originalText = detectBtn.innerHTML;
+            detectBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري التعرف...';
+            detectBtn.disabled = true;
+            
+            try {
+                // أولاً، الحصول على معلومات البوت
+                const botInfoResponse = await fetch(`https://api.telegram.org/bot${token}/getMe`);
+                const botInfo = await botInfoResponse.json();
+                
+                if (!botInfo.ok) {
+                    throw new Error('Token غير صحيح');
+                }
+                
+                // حفظ اسم البوت تلقائيًا
+                if (botInfo.result.username) {
+                    document.getElementById('bot-name').value = botInfo.result.username;
+                }
+                
+                // الحصول على آخر تحديثات البوت للعثور على Chat ID
+                const updatesResponse = await fetch(`https://api.telegram.org/bot${token}/getUpdates`);
+                const updates = await updatesResponse.json();
+                
+                if (updates.ok && updates.result.length > 0) {
+                    // أخذ Chat ID من أول رسالة
+                    const chatId = updates.result[0].message.chat.id;
+                    telegramSettings.chatId = chatId;
+                    telegramSettings.token = token;
+                    
+                    document.getElementById('chat-id-display').textContent = chatId;
+                    showNotification(`تم التعرف على Chat ID: ${chatId}`, 'success');
+                    updateConnectionStatus(true, 'تم الاتصال بنجاح!');
+                } else {
+                    // إذا لم تكن هناك رسائل، نطلب من المستخدم إرسال رسالة
+                    showNotification('أرسل رسالة إلى البوت ثم اضغط على الزر مرة أخرى', 'info');
+                    document.getElementById('chat-id-display').textContent = 'يرجى إرسال رسالة إلى البوت أولاً';
+                }
+            } catch (error) {
+                console.error('Error detecting Chat ID:', error);
+                showNotification('فشل التعرف على Chat ID. تأكد من صحة Token', 'error');
+                updateConnectionStatus(false, 'فشل الاتصال');
+            } finally {
+                detectBtn.innerHTML = originalText;
+                detectBtn.disabled = false;
+            }
+        }
+
+        // اختبار الاتصال وإرسال رسالة
+        async function testTelegramConnection() {
+            const token = telegramSettings.token || document.getElementById('telegram-token').value.trim();
+            const chatId = telegramSettings.chatId;
+            
+            if (!token) {
+                showNotification('يرجى إدخال Token البوت أولاً', 'error');
+                return;
+            }
+            
+            if (!chatId) {
+                showNotification('يرجى التعرف على Chat ID أولاً', 'error');
+                return;
+            }
+            
+            const testBtn = document.getElementById('test-telegram-btn');
+            const originalText = testBtn.innerHTML;
+            testBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري الاختبار...';
+            testBtn.disabled = true;
+            
+            try {
+                // إرسال رسالة اختبارية
+                const message = encodeURIComponent('✅ تم اختبار الاتصال بنجاح من تطبيق مرآة المؤمن!');
+                const response = await fetch(`https://api.telegram.org/bot${token}/sendMessage?chat_id=${chatId}&text=${message}`);
+                const result = await response.json();
+                
+                if (result.ok) {
+                    showNotification('تم إرسال رسالة الاختبار بنجاح!', 'success');
+                    updateConnectionStatus(true, 'تم إرسال الرسالة بنجاح');
+                    
+                    // حفظ الإعدادات تلقائيًا بعد الاختبار الناجح
+                    if (!telegramSettings.token || telegramSettings.token !== token) {
+                        await saveTelegramSettings();
+                    }
+                } else {
+                    throw new Error(result.description || 'فشل إرسال الرسالة');
+                }
+            } catch (error) {
+                console.error('Error testing connection:', error);
+                showNotification(`فشل إرسال الرسالة: ${error.message}`, 'error');
+                updateConnectionStatus(false, 'فشل إرسال الرسالة');
+            } finally {
+                testBtn.innerHTML = originalText;
+                testBtn.disabled = false;
+            }
+        }
+
+        // تحديث حالة الاتصال
+        function updateConnectionStatus(success = null, message = '') {
+            const statusDiv = document.getElementById('connection-status');
+            const statusIcon = document.getElementById('status-icon');
+            const statusText = document.getElementById('status-text');
+            
+            statusDiv.style.display = 'block';
+            
+            if (success === true) {
+                statusDiv.style.backgroundColor = '#05966920';
+                statusIcon.innerHTML = '<i class="fas fa-check-circle" style="color: #059669; margin-left: 5px;"></i>';
+                statusText.textContent = message || 'الاتصال ناجح';
+                statusText.style.color = '#059669';
+            } else if (success === false) {
+                statusDiv.style.backgroundColor = '#dc262620';
+                statusIcon.innerHTML = '<i class="fas fa-times-circle" style="color: #dc2626; margin-left: 5px;"></i>';
+                statusText.textContent = message || 'فشل الاتصال';
+                statusText.style.color = '#dc2626';
+            } else {
+                statusDiv.style.backgroundColor = '#f3f4f6';
+                statusIcon.innerHTML = '<i class="fas fa-info-circle" style="color: #6b7280; margin-left: 5px;"></i>';
+                statusText.textContent = 'لم يتم اختبار الاتصال بعد';
+                statusText.style.color = '#6b7280';
+            }
+        }
+
+        // تحديث استدعاء loadUserSettings ليشمل Telegram
+        function loadUserSettings() {
+            loadTelegramSettings();
+            
+            // الكود القديم...
+            fetch('settings/get_settings.php')
+            .then(response => response.json())
+            .then(data => {
+                if (data.block_all_groups === 1) {
+                    document.getElementById('block-all-groups-toggle').checked = true;
+                    const item = document.getElementById('block-groups-item');
+                    item.style.backgroundColor = 'rgba(220, 53, 69, 0.05)';
+                    item.style.borderRight = '4px solid #dc3545';
+                }
+                
+                // تحميل إعدادات Telegram أيضًا
+                if (data.telegram_settings) {
+                    telegramSettings = JSON.parse(data.telegram_settings);
+                    updateTelegramStatus();
+                }
+            })
+            .catch(error => {
+                console.error('Error loading settings:', error);
+            });
+        }
+
+        // تحديث openModal لتحميل إعدادات Telegram عند فتح النافذة
+        function openModal(modalType) {
+            const modal = document.getElementById(`${modalType}-modal`);
+            if (modal) {
+                if (modalType === 'telegram') {
+                    updateTelegramModal();
+                }
+                modal.style.display = 'flex';
+                document.body.style.overflow = 'hidden';
+            }
+        }
     </script>
 </body>
 </html>

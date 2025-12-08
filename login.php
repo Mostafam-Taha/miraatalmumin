@@ -17,389 +17,8 @@ if (isset($_SESSION['user_id'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200..1000&family=Tajawal:wght@200;300;400;500;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <title>تسجيل الدخول - متابعة الصلوات</title>
-    <style>
-        :root {
-            --primary-color: #059669;
-            --primary-light: #d1fae5;
-            --primary-dark: #047857;
-            --text-color: #111827;
-            --text-light: #6b7280;
-            --light-bg: #f9fafb;
-            --border-color: #e5e7eb;
-            --danger-color: #dc2626;
-            --warning-color: #d97706;
-            --info-color: #3b82f6;
-            --shadow-sm: 0 1px 3px rgba(0,0,0,0.12);
-            --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
-            --shadow-lg: 0 10px 25px rgba(0,0,0,0.15);
-            --radius-sm: 8px;
-            --radius-md: 12px;
-            --radius-lg: 16px;
-            --radius-xl: 24px;
-            --transition: all 0.3s ease;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
-            color: var(--text-color);
-            font-family: 'Tajawal', 'Cairo', sans-serif;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-            position: relative;
-            overflow-x: hidden;
-        }
-
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            right: 0;
-            width: 100%;
-            height: 100%;
-            background: 
-                radial-gradient(circle at 20% 80%, rgba(5, 150, 105, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 80% 20%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 40% 40%, rgba(217, 119, 6, 0.05) 0%, transparent 50%);
-            z-index: -1;
-        }
-
-        .login-container {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: var(--radius-xl);
-            padding: 50px 40px;
-            box-shadow: var(--shadow-lg);
-            text-align: center;
-            max-width: 480px;
-            width: 100%;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            position: relative;
-            overflow: hidden;
-            animation: slideUp 0.8s ease;
-        }
-
-        .login-container::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            right: 0;
-            width: 100%;
-            height: 8px;
-            background: linear-gradient(90deg, var(--primary-color) 0%, var(--primary-dark) 100%);
-        }
-
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(40px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .logo-container {
-            margin-bottom: 30px;
-            position: relative;
-        }
-
-        .logo-icon {
-            width: 80px;
-            height: 80px;
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 20px;
-            color: white;
-            font-size: 32px;
-            box-shadow: 0 8px 25px rgba(5, 150, 105, 0.3);
-            animation: float 6s ease-in-out infinite;
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
-
-        .app-title {
-            color: var(--primary-dark);
-            margin-bottom: 10px;
-            font-size: 32px;
-            font-weight: 800;
-            font-family: 'Cairo', sans-serif;
-            letter-spacing: -0.5px;
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .app-subtitle {
-            color: var(--text-light);
-            margin-bottom: 40px;
-            font-size: 16px;
-            line-height: 1.6;
-            max-width: 320px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .features {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 15px;
-            margin-bottom: 40px;
-        }
-
-        .feature-item {
-            background: var(--primary-light);
-            padding: 10px 15px;
-            border-radius: var(--radius-md);
-            font-size: 14px;
-            color: var(--primary-dark);
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            border: 1px solid rgba(5, 150, 105, 0.2);
-        }
-
-        .feature-item i {
-            font-size: 16px;
-        }
-
-        .google-section {
-            background: var(--light-bg);
-            padding: 30px;
-            border-radius: var(--radius-lg);
-            margin-bottom: 30px;
-            border: 1px solid var(--border-color);
-        }
-
-        .section-title {
-            color: var(--text-color);
-            font-size: 18px;
-            font-weight: 700;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            font-family: 'Cairo', sans-serif;
-        }
-
-        .section-title i {
-            color: var(--primary-color);
-        }
-
-        .google-btn-container {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        .g_id_signin {
-            margin: 0 auto;
-        }
-
-        .alternative-login {
-            margin-top: 25px;
-            padding-top: 25px;
-            border-top: 1px solid var(--border-color);
-        }
-
-        .alternative-btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            padding: 15px 25px;
-            background: white;
-            border: 2px solid var(--border-color);
-            border-radius: var(--radius-md);
-            color: var(--text-color);
-            font-weight: 600;
-            font-size: 15px;
-            cursor: pointer;
-            transition: var(--transition);
-            text-decoration: none;
-            margin-top: 10px;
-            width: 100%;
-            max-width: 300px;
-        }
-
-        .alternative-btn:hover {
-            background: var(--light-bg);
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
-            border-color: var(--primary-color);
-        }
-
-        .alternative-btn i {
-            color: var(--primary-color);
-            font-size: 18px;
-        }
-
-        .loading {
-            display: none;
-            margin-top: 30px;
-            padding: 20px;
-            background: var(--light-bg);
-            border-radius: var(--radius-md);
-            border: 1px solid var(--border-color);
-        }
-
-        .loading-content {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 15px;
-        }
-
-        .spinner {
-            width: 24px;
-            height: 24px;
-            border: 3px solid var(--border-color);
-            border-top-color: var(--primary-color);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        .loading-text {
-            color: var(--text-color);
-            font-weight: 600;
-        }
-
-        .privacy-notice {
-            margin-top: 25px;
-            padding: 15px;
-            background: var(--light-bg);
-            border-radius: var(--radius-md);
-            font-size: 13px;
-            color: var(--text-light);
-            line-height: 1.6;
-        }
-
-        .privacy-notice a {
-            color: var(--primary-color);
-            text-decoration: none;
-            font-weight: 600;
-        }
-
-        .privacy-notice a:hover {
-            text-decoration: underline;
-        }
-
-        .guest-info {
-            margin-top: 20px;
-            padding: 20px;
-            background: linear-gradient(135deg, var(--primary-light) 0%, rgba(5, 150, 105, 0.1) 100%);
-            border-radius: var(--radius-md);
-            border-right: 4px solid var(--primary-color);
-            animation: fadeIn 1s ease;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .guest-title {
-            color: var(--primary-dark);
-            font-size: 16px;
-            font-weight: 700;
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .guest-text {
-            color: var(--text-color);
-            font-size: 14px;
-            line-height: 1.6;
-        }
-
-        /* One Tap Prompt Styling */
-        .g_id_onload {
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            z-index: 1000;
-        }
-
-        /* Mobile Responsive */
-        @media (max-width: 768px) {
-            .login-container {
-                padding: 40px 25px;
-                margin: 20px;
-            }
-            
-            .app-title {
-                font-size: 28px;
-            }
-            
-            .features {
-                gap: 10px;
-            }
-            
-            .feature-item {
-                padding: 8px 12px;
-                font-size: 13px;
-            }
-            
-            .google-section {
-                padding: 25px 20px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            body {
-                padding: 15px;
-            }
-            
-            .login-container {
-                padding: 35px 20px;
-            }
-            
-            .logo-icon {
-                width: 70px;
-                height: 70px;
-                font-size: 28px;
-            }
-            
-            .app-title {
-                font-size: 24px;
-            }
-            
-            .app-subtitle {
-                font-size: 15px;
-            }
-            
-            .feature-item {
-                font-size: 12px;
-                padding: 6px 10px;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="assets/css/login.css">
+    <title>Login - Miraatalmumin</title>
 </head>
 <body>
     <div class="login-container">
@@ -407,7 +26,7 @@ if (isset($_SESSION['user_id'])) {
             <div class="logo-icon">
                 <i class="fas fa-pray"></i>
             </div>
-            <h1 class="app-title">مرآة المؤمن</h1>
+            <h1 class="app-title">متابعة الصلوات</h1>
             <p class="app-subtitle">سجل دخولك لمتابعة صلواتك اليومية ومراجعة تقدمك الروحي</p>
         </div>
         
@@ -440,7 +59,7 @@ if (isset($_SESSION['user_id'])) {
         <!-- Google Sign In Button -->
         <div class="google-section">
             <h3 class="section-title">
-                <i class="fas fa-sign-in-alt"></i>
+                <i class="fab fa-google"></i>
                 تسجيل الدخول باستخدام Google
             </h3>
             
@@ -455,26 +74,23 @@ if (isset($_SESSION['user_id'])) {
                      data-width="300">
                 </div>
             </div>
-            
-            <div class="alternative-login">
-                <button class="alternative-btn" onclick="showOneTap()">
-                    <i class="fas fa-bolt"></i>
-                    تسجيل سريع (One Tap)
-                </button>
-            </div>
         </div>
         
-        <!-- Guest Information -->
-        <div class="guest-info">
-            <h4 class="guest-title">
+        <!-- Email Login Section -->
+        <div class="email-login-section">
+            <h3 class="section-title">
+                <i class="fas fa-envelope"></i>
+                تسجيل الدخول باستخدام البريد الإلكتروني
+            </h3>
+            
+            <button class="email-login-btn" onclick="openEmailModal('login')">
+                <i class="fas fa-sign-in-alt"></i>
+                تسجيل الدخول / إنشاء حساب
+            </button>
+            
+            <p style="margin-top: 15px; color: var(--text-light); font-size: 14px;">
                 <i class="fas fa-info-circle"></i>
-                لماذا التسجيل باستخدام Google؟
-            </h4>
-            <p class="guest-text">
-                • تسجيل آمن وسريع بدون كلمات مرور<br>
-                • بيانات محمية وفق معايير Google<br>
-                • سهولة استعادة الحساب عند الحاجة<br>
-                • تجربة مستخدم أفضل وأسرع
+                يمكنك استخدام البريد الإلكتروني وكلمة المرور
             </p>
         </div>
         
@@ -491,14 +107,194 @@ if (isset($_SESSION['user_id'])) {
             <i class="fas fa-shield-alt" style="margin-left: 5px;"></i>
             باستخدامك للتطبيق، فإنك توافق على 
             <a href="privacy.php">سياسة الخصوصية</a> 
-            و 
-            <a href="terms.php">شروط الخدمة</a>
+            <!-- <a href="terms.php">شروط الخدمة</a> -->
+        </div>
+    </div>
+
+    <!-- نافذة تسجيل الدخول بالبريد -->
+    <div class="modal-overlay" id="emailModal">
+        <div class="email-modal">
+            <div class="modal-header">
+                <button class="modal-close" onclick="closeEmailModal()">&times;</button>
+                <h2 id="modalTitle">تسجيل الدخول</h2>
+                <p id="modalSubtitle">أدخل بياناتك للدخول إلى حسابك</p>
+            </div>
+            
+            <div class="modal-body">
+                <!-- رسالة النجاح/الخطأ -->
+                <div class="form-message" id="formMessage"></div>
+                
+                <!-- نموذج تسجيل الدخول -->
+                <div class="form-section active" id="loginForm">
+                    <form id="loginFormElement" onsubmit="handleLogin(event)">
+                        <div class="form-group">
+                            <label for="loginEmail">
+                                <i class="fas fa-envelope"></i> البريد الإلكتروني
+                            </label>
+                            <input type="email" 
+                                   id="loginEmail" 
+                                   class="form-input" 
+                                   placeholder="example@email.com" 
+                                   required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="loginPassword">
+                                <i class="fas fa-lock"></i> كلمة المرور
+                            </label>
+                            <div class="password-container">
+                                <input type="password" 
+                                       id="loginPassword" 
+                                       class="form-input" 
+                                       placeholder="أدخل كلمة المرور" 
+                                       required>
+                                <button type="button" class="toggle-password" onclick="togglePassword('loginPassword')">
+                                    <i class="far fa-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="form-options">
+                            <label class="remember-me">
+                                <input type="checkbox" id="rememberMe">
+                                تذكرني
+                            </label>
+                            <a href="#" class="forgot-password" onclick="showForgotPassword()">
+                                نسيت كلمة المرور؟
+                            </a>
+                        </div>
+                        
+                        <button type="submit" class="submit-btn" id="loginSubmitBtn">
+                            <i class="fas fa-sign-in-alt"></i>
+                            تسجيل الدخول
+                        </button>
+                    </form>
+                    
+                    <div class="form-switch">
+                        <span class="switch-text">ليس لديك حساب؟</span>
+                        <button class="switch-btn" onclick="showRegisterForm()">
+                            إنشاء حساب جديد
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- نموذج إنشاء حساب -->
+                <div class="form-section" id="registerForm">
+                    <form id="registerFormElement" onsubmit="handleRegister(event)">
+                        <div class="form-group">
+                            <label for="registerName">
+                                <i class="fas fa-user"></i> الاسم الكامل
+                            </label>
+                            <input type="text" 
+                                   id="registerName" 
+                                   class="form-input" 
+                                   placeholder="أدخل اسمك الكامل" 
+                                   required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="registerEmail">
+                                <i class="fas fa-envelope"></i> البريد الإلكتروني
+                            </label>
+                            <input type="email" 
+                                   id="registerEmail" 
+                                   class="form-input" 
+                                   placeholder="example@email.com" 
+                                   required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="registerPassword">
+                                <i class="fas fa-lock"></i> كلمة المرور
+                            </label>
+                            <div class="password-container">
+                                <input type="password" 
+                                       id="registerPassword" 
+                                       class="form-input" 
+                                       placeholder="كلمة مرور قوية (6 أحرف على الأقل)" 
+                                       minlength="6" 
+                                       required>
+                                <button type="button" class="toggle-password" onclick="togglePassword('registerPassword')">
+                                    <i class="far fa-eye"></i>
+                                </button>
+                            </div>
+                            <small style="color: var(--text-light); font-size: 12px; display: block; margin-top: 5px;">
+                                يجب أن تكون كلمة المرور 6 أحرف على الأقل
+                            </small>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="registerConfirmPassword">
+                                <i class="fas fa-lock"></i> تأكيد كلمة المرور
+                            </label>
+                            <div class="password-container">
+                                <input type="password" 
+                                       id="registerConfirmPassword" 
+                                       class="form-input" 
+                                       placeholder="أعد إدخال كلمة المرور" 
+                                       required>
+                                <button type="button" class="toggle-password" onclick="togglePassword('registerConfirmPassword')">
+                                    <i class="far fa-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="submit-btn" id="registerSubmitBtn">
+                            <i class="fas fa-user-plus"></i>
+                            إنشاء حساب جديد
+                        </button>
+                    </form>
+                    
+                    <div class="form-switch">
+                        <span class="switch-text">لديك حساب بالفعل؟</span>
+                        <button class="switch-btn" onclick="showLoginForm()">
+                            تسجيل الدخول
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- نموذج استعادة كلمة المرور -->
+                <div class="form-section" id="forgotPasswordForm">
+                    <form id="forgotPasswordFormElement" onsubmit="handleForgotPassword(event)">
+                        <div class="form-group">
+                            <label for="forgotEmail">
+                                <i class="fas fa-envelope"></i> البريد الإلكتروني
+                            </label>
+                            <input type="email" 
+                                   id="forgotEmail" 
+                                   class="form-input" 
+                                   placeholder="أدخل بريدك الإلكتروني" 
+                                   required>
+                        </div>
+                        
+                        <p style="color: var(--text-light); font-size: 14px; margin-bottom: 20px;">
+                            <i class="fas fa-info-circle"></i>
+                            سنرسل لك رابطاً لإعادة تعيين كلمة المرور
+                        </p>
+                        
+                        <button type="submit" class="submit-btn" id="forgotSubmitBtn">
+                            <i class="fas fa-paper-plane"></i>
+                            إرسال رابط الاستعادة
+                        </button>
+                    </form>
+                    
+                    <div class="form-switch">
+                        <button class="switch-btn" onclick="showLoginForm()">
+                            <i class="fas fa-arrow-right"></i>
+                            العودة لتسجيل الدخول
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <script>
-        // دالة التعامل مع تسجيل الدخول
+        // متغيرات عامة
+        let currentForm = 'login';
+
+        // دالة التعامل مع تسجيل الدخول بالجوجل
         function handleGoogleLogin(response) {
             showLoading();
             
@@ -519,19 +315,11 @@ if (isset($_SESSION['user_id'])) {
             })
             .then(data => {
                 if (data.success) {
-                    // عرض رسالة نجاح
                     showSuccessMessage();
-                    
-                    // التوجيه بعد فترة قصيرة
                     setTimeout(() => {
                         const urlParams = new URLSearchParams(window.location.search);
                         const redirect = urlParams.get('redirect');
-                        
-                        if (redirect) {
-                            window.location.href = redirect;
-                        } else {
-                            window.location.href = 'index.php';
-                        }
+                        window.location.href = redirect || 'index.php';
                     }, 1500);
                 } else {
                     hideLoading();
@@ -545,15 +333,290 @@ if (isset($_SESSION['user_id'])) {
             });
         }
 
-        // دالة لعرض One Tap يدويًا
-        function showOneTap() {
-            google.accounts.id.prompt((notification) => {
-                if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
-                    // يمكن عرض زر تسجيل الدخول التقليدي هنا
-                    alert('للتسجيل السريع، تأكد من السماح لـ Google One Tap في متصفحك.');
-                }
-            });
+        // فتح نافذة البريد
+        function openEmailModal(formType = 'login') {
+            document.getElementById('emailModal').style.display = 'flex';
+            showForm(formType);
         }
+
+        // إغلاق نافذة البريد
+        function closeEmailModal() {
+            document.getElementById('emailModal').style.display = 'none';
+            resetForms();
+        }
+
+        // إظهار النموذج المطلوب
+        function showForm(formType) {
+            // إخفاء جميع النماذج
+            document.querySelectorAll('.form-section').forEach(form => {
+                form.classList.remove('active');
+            });
+            
+            // إظهار النموذج المطلوب
+            document.getElementById(formType + 'Form').classList.add('active');
+            
+            // تحديث العنوان
+            const titles = {
+                'login': { title: 'تسجيل الدخول', subtitle: 'أدخل بياناتك للدخول إلى حسابك' },
+                'register': { title: 'إنشاء حساب جديد', subtitle: 'املأ البيانات التالية لإنشاء حساب' },
+                'forgotPassword': { title: 'استعادة كلمة المرور', subtitle: 'أدخل بريدك الإلكتروني لاستعادة الحساب' }
+            };
+            
+            document.getElementById('modalTitle').textContent = titles[formType].title;
+            document.getElementById('modalSubtitle').textContent = titles[formType].subtitle;
+            
+            currentForm = formType;
+            hideFormMessage();
+        }
+
+        // إظهار نموذج التسجيل
+        function showRegisterForm() {
+            showForm('register');
+        }
+
+        // إظهار نموذج تسجيل الدخول
+        function showLoginForm() {
+            showForm('login');
+        }
+
+        // إظهار نموذج استعادة كلمة المرور
+        function showForgotPassword() {
+            showForm('forgotPassword');
+        }
+
+        // إعادة تعيين النماذج
+        function resetForms() {
+            document.getElementById('loginFormElement').reset();
+            document.getElementById('registerFormElement').reset();
+            document.getElementById('forgotPasswordFormElement').reset();
+            hideFormMessage();
+            showForm('login');
+        }
+
+        // عرض/إخفاء كلمة المرور
+        function togglePassword(inputId) {
+            const input = document.getElementById(inputId);
+            const icon = input.nextElementSibling.querySelector('i');
+            
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
+
+        // عرض رسالة في النموذج
+        function showFormMessage(message, type = 'error') {
+            const messageDiv = document.getElementById('formMessage');
+            messageDiv.textContent = message;
+            messageDiv.className = `form-message ${type}`;
+            messageDiv.style.display = 'block';
+            
+            // إخفاء الرسالة بعد 5 ثواني
+            if (type === 'success') {
+                setTimeout(hideFormMessage, 5000);
+            }
+        }
+
+        // إخفاء رسالة النموذج
+        function hideFormMessage() {
+            document.getElementById('formMessage').style.display = 'none';
+        }
+
+        // معالجة تسجيل الدخول
+        async function handleLogin(event) {
+            event.preventDefault();
+            
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            const rememberMe = document.getElementById('rememberMe').checked;
+            
+            // التحقق من المدخلات
+            if (!email || !password) {
+                showFormMessage('يرجى ملء جميع الحقول', 'error');
+                return;
+            }
+            
+            // تعطيل زر الإرسال
+            const submitBtn = document.getElementById('loginSubmitBtn');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري التحقق...';
+            
+            try {
+                const response = await fetch('api/email_login.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        action: 'login',
+                        email: email,
+                        password: password,
+                        remember: rememberMe
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showFormMessage('تم تسجيل الدخول بنجاح!', 'success');
+                    
+                    // إعادة التوجيه بعد نجاح التسجيل
+                    setTimeout(() => {
+                        const urlParams = new URLSearchParams(window.location.search);
+                        const redirect = urlParams.get('redirect');
+                        window.location.href = redirect || 'index.php';
+                    }, 1500);
+                } else {
+                    showFormMessage(data.message || 'فشل تسجيل الدخول', 'error');
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> تسجيل الدخول';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showFormMessage('حدث خطأ في الاتصال بالخادم', 'error');
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> تسجيل الدخول';
+            }
+        }
+
+        // معالجة إنشاء حساب
+        async function handleRegister(event) {
+            event.preventDefault();
+            
+            const name = document.getElementById('registerName').value;
+            const email = document.getElementById('registerEmail').value;
+            const password = document.getElementById('registerPassword').value;
+            const confirmPassword = document.getElementById('registerConfirmPassword').value;
+            
+            // التحقق من المدخلات
+            if (!name || !email || !password || !confirmPassword) {
+                showFormMessage('يرجى ملء جميع الحقول', 'error');
+                return;
+            }
+            
+            if (password.length < 6) {
+                showFormMessage('كلمة المرور يجب أن تكون 6 أحرف على الأقل', 'error');
+                return;
+            }
+            
+            if (password !== confirmPassword) {
+                showFormMessage('كلمة المرور وتأكيدها غير متطابقين', 'error');
+                return;
+            }
+            
+            // تعطيل زر الإرسال
+            const submitBtn = document.getElementById('registerSubmitBtn');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري إنشاء الحساب...';
+            
+            try {
+                const response = await fetch('api/email_login.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        action: 'register',
+                        name: name,
+                        email: email,
+                        password: password
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showFormMessage('تم إنشاء الحساب بنجاح! يمكنك تسجيل الدخول الآن.', 'success');
+                    
+                    // إظهار نموذج تسجيل الدخول بعد النجاح
+                    setTimeout(() => {
+                        showLoginForm();
+                        document.getElementById('loginEmail').value = email;
+                        document.getElementById('loginPassword').value = password;
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = '<i class="fas fa-user-plus"></i> إنشاء حساب جديد';
+                    }, 2000);
+                } else {
+                    showFormMessage(data.message || 'فشل إنشاء الحساب', 'error');
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = '<i class="fas fa-user-plus"></i> إنشاء حساب جديد';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showFormMessage('حدث خطأ في الاتصال بالخادم', 'error');
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-user-plus"></i> إنشاء حساب جديد';
+            }
+        }
+
+        // معالجة استعادة كلمة المرور
+        async function handleForgotPassword(event) {
+            event.preventDefault();
+            
+            const email = document.getElementById('forgotEmail').value;
+            
+            if (!email) {
+                showFormMessage('يرجى إدخال البريد الإلكتروني', 'error');
+                return;
+            }
+            
+            // تعطيل زر الإرسال
+            const submitBtn = document.getElementById('forgotSubmitBtn');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري الإرسال...';
+            
+            try {
+                const response = await fetch('api/email_login.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        action: 'forgot_password',
+                        email: email
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showFormMessage(data.message || 'تم إرسال رابط الاستعادة إلى بريدك الإلكتروني', 'success');
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> إرسال رابط الاستعادة';
+                    
+                    // العودة لتسجيل الدخول بعد 3 ثواني
+                    setTimeout(showLoginForm, 3000);
+                } else {
+                    showFormMessage(data.message || 'حدث خطأ أثناء إرسال رابط الاستعادة', 'error');
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> إرسال رابط الاستعادة';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showFormMessage('حدث خطأ في الاتصال بالخادم', 'error');
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> إرسال رابط الاستعادة';
+            }
+        }
+
+        // إغلاق النافذة بالضغط على ESC
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeEmailModal();
+            }
+        });
+
+        // إغلاق النافذة بالضغط خارجها
+        document.getElementById('emailModal').addEventListener('click', function(event) {
+            if (event.target === this) {
+                closeEmailModal();
+            }
+        });
 
         // دالة عرض حالة التحميل
         function showLoading() {
@@ -577,7 +640,6 @@ if (isset($_SESSION['user_id'])) {
 
         // دالة لعرض رسالة الخطأ
         function showErrorMessage(message) {
-            // إنشاء عنصر الرسالة
             const errorDiv = document.createElement('div');
             errorDiv.style.cssText = `
                 position: fixed;
@@ -605,7 +667,6 @@ if (isset($_SESSION['user_id'])) {
             `;
             document.body.appendChild(errorDiv);
             
-            // إزالة الرسالة بعد 5 ثواني
             setTimeout(() => {
                 errorDiv.style.animation = 'slideOut 0.3s ease';
                 setTimeout(() => {
@@ -628,37 +689,6 @@ if (isset($_SESSION['user_id'])) {
             }
         `;
         document.head.appendChild(style);
-
-        // تهيئة One Tap عند تحميل الصفحة
-        document.addEventListener('DOMContentLoaded', function() {
-            // يمكن إضافة أي تهيئات إضافية هنا
-            
-            // تتبع أحداث One Tap
-            google.accounts.id.initialize({
-                client_id: '939332338996-875ui8gonoocvr3msupiis6e7ab2oq9t.apps.googleusercontent.com',
-                callback: handleGoogleLogin,
-                context: 'signin',
-                ux_mode: 'popup',
-                auto_select: false,
-                itp_support: true
-            });
-            
-            // محاولة عرض One Tap تلقائيًا للمستخدمين المناسبين
-            google.accounts.id.prompt((notification) => {
-                if (notification.isDisplayed()) {
-                    console.log('One Tap is displayed');
-                }
-                if (notification.isNotDisplayed()) {
-                    console.log('One Tap was not displayed');
-                }
-                if (notification.isSkippedMoment()) {
-                    console.log('One Tap was skipped');
-                }
-                if (notification.isDismissedMoment()) {
-                    console.log('One Tap was dismissed');
-                }
-            });
-        });
     </script>
 </body>
 </html>

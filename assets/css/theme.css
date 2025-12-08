@@ -1,0 +1,130 @@
+/* assets/css/theme.css */
+
+/* المتغيرات الأساسية */
+:root {
+    /* ألوان المظهر الفاتح (الافتراضي) */
+    --color-bg: #f8f9fa;
+    --color-card: #ffffff;
+    --color-text: #333333;
+    --color-text-secondary: #666666;
+    --color-border: #e0e0e0;
+    --color-primary: #007bff;
+    --color-primary-light: #e3f2fd;
+    --color-secondary: #6c757d;
+    --color-success: #28a745;
+    --color-danger: #dc3545;
+    --color-warning: #ffc107;
+    --color-info: #17a2b8;
+    --color-hover: #f1f3f4;
+    --color-shadow: rgba(0, 0, 0, 0.1);
+    
+    /* أحجام الخطوط */
+    --font-size-sm: 0.875rem;
+    --font-size-base: 1rem;
+    --font-size-lg: 1.125rem;
+    --font-size-xl: 1.25rem;
+    --font-size-2xl: 1.5rem;
+    
+    /* التباعد */
+    --spacing-xs: 0.25rem;
+    --spacing-sm: 0.5rem;
+    --spacing-md: 1rem;
+    --spacing-lg: 1.5rem;
+    --spacing-xl: 2rem;
+    
+    /* الزوايا */
+    --border-radius-sm: 4px;
+    --border-radius-md: 8px;
+    --border-radius-lg: 12px;
+    --border-radius-xl: 16px;
+}
+
+/* المظهر الداكن */
+.dark-theme {
+    --color-bg: #121212;
+    --color-card: #1e1e1e;
+    --color-text: #e0e0e0;
+    --color-text-secondary: #a0a0a0;
+    --color-border: #333333;
+    --color-primary: #0d8eff;
+    --color-primary-light: #0d1b2a;
+    --color-secondary: #6c757d;
+    --color-success: #28a745;
+    --color-danger: #dc3545;
+    --color-warning: #ffc107;
+    --color-info: #17a2b8;
+    --color-hover: #2d2d2d;
+    --color-shadow: rgba(0, 0, 0, 0.3);
+}
+
+/* تطبيق المتغيرات */
+body {
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* عناصر شائعة */
+.card, .modal, .settings-section, .container {
+    background-color: var(--color-card);
+    border-color: var(--color-border);
+    box-shadow: 0 2px 10px var(--color-shadow);
+}
+
+.btn {
+    background-color: var(--color-primary);
+    color: white;
+    border: 1px solid var(--color-primary);
+}
+
+.btn:hover {
+    background-color: var(--color-primary);
+    opacity: 0.9;
+}
+
+.input, .form-control, select, textarea {
+    background-color: var(--color-card);
+    color: var(--color-text);
+    border-color: var(--color-border);
+}
+
+.input:focus, .form-control:focus, select:focus, textarea:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px var(--color-primary-light);
+}
+
+/* أحجام الخطوط */
+body.font-small {
+    --font-size-base: 0.875rem;
+    --font-size-lg: 1rem;
+    --font-size-xl: 1.125rem;
+    --font-size-2xl: 1.25rem;
+}
+
+body.font-medium {
+    --font-size-base: 1rem;
+    --font-size-lg: 1.125rem;
+    --font-size-xl: 1.25rem;
+    --font-size-2xl: 1.5rem;
+}
+
+body.font-large {
+    --font-size-base: 1.125rem;
+    --font-size-lg: 1.25rem;
+    --font-size-xl: 1.5rem;
+    --font-size-2xl: 1.75rem;
+}
+
+body.font-xlarge {
+    --font-size-base: 1.25rem;
+    --font-size-lg: 1.5rem;
+    --font-size-xl: 1.75rem;
+    --font-size-2xl: 2rem;
+}
+
+/* تطبيق أحجام الخطوط */
+h1 { font-size: var(--font-size-2xl); }
+h2 { font-size: var(--font-size-xl); }
+h3 { font-size: var(--font-size-lg); }
+p, div, span { font-size: var(--font-size-base); }
+small { font-size: var(--font-size-sm); }
