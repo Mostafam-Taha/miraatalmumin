@@ -171,7 +171,7 @@ miraat-almunin/
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/yourusername/miraat-almunin.git
+   git clone  https://github.com/Mostafam-Taha/miraatalmumin.git
    cd miraat-almunin
    ```
 
