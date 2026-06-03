@@ -1,9 +1,9 @@
 <?php
 // إعدادات الاتصال
-$host = 'sql207.infinityfree.com';
-$dbname = 'if0_39304815_miraatalmuminif';
-$username = 'if0_39304815';
-$password = 'NIHOIGYPkLGsq0';
+$host = 'localhost';
+$dbname = 'miraatalmumin';
+$username = 'root';
+$password = '#';
 
 // ضبط التوقيت المصري في PHP أولاً
 date_default_timezone_set('Africa/Cairo');
