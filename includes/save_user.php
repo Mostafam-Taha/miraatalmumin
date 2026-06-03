@@ -5,10 +5,10 @@ header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST');
 header('Access-Control-Allow-Headers: Content-Type');
 
-$host = 'sql207.infinityfree.com';
-$dbname = 'if0_39304815_miraatalmuminif';
-$username = 'if0_39304815';
-$password = 'NIHOIGYPkLGsq0';
+$host = 'localhost';
+$dbname = 'miraatalmumin';
+$username = 'root';
+$password = '#';
 
 // دالة لتحديد نوع الجهاز
 function detectDeviceType($user_agent) {
