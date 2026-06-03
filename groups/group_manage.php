@@ -455,6 +455,26 @@ function sendTelegramMessage($bot_token, $chat_id, $message, $parse_mode = 'HTML
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../assets/css/group_manage.css">
+    
+    
+    
+    
+    <!-- Google tag (gtag.js) -->
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-RSG9M1LGJD"></script>
+
+<script>
+
+  window.dataLayer = window.dataLayer || [];
+
+  function gtag(){dataLayer.push(arguments);}
+
+  gtag('js', new Date());
+
+  gtag('config', 'G-RSG9M1LGJD');
+
+</script>
+    
 </head>
 <body>
     <div class="container">

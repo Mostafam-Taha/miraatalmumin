@@ -26,7 +26,7 @@ html, body {
 body {
     color: #111827;
     font-family: "Tajawal", sans-serif;
-    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    background-color: #ffffff !important;
 }
 
 .container {
@@ -61,8 +61,7 @@ body {
 .main-container {
     background-color: white;
     border-radius: 12px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-    border: 1px solid #e5e7eb;
+    /* box-shadow: 0 4px 20px rgba(0,0,0,0.08); */
     overflow: hidden;
 }
 
@@ -71,9 +70,7 @@ body {
     justify-content: space-between;
     flex-direction: column;
     margin-bottom: 0;
-    padding: 20px 20px 15px 20px;
     border-bottom: 2px solid #f1f5f9;
-    background: linear-gradient(to right, #f0f9ff, #ffffff);
 }
 
 .page-header h2 {
@@ -107,7 +104,7 @@ body {
 /* الأقسام */
 .section {
     margin-bottom: 30px;
-    padding: 0 20px;
+    /* padding: 0 20px; */
 }
 
 .section-title {
@@ -165,7 +162,7 @@ body {
 
 .group-emoji {
     font-size: 45px;
-    margin-left: 15px;
+    /* margin-left: 15px; */
     flex-shrink: 0;
 }
 
@@ -754,7 +751,7 @@ textarea.form-control {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 12px 15px;
+    padding: 12px 12px;
     border: 2px solid #e5e7eb;
     border-radius: 12px;
     background-color: white;
@@ -780,9 +777,15 @@ textarea.form-control {
 
 .consistency-score {
     font-weight: 700;
-    color: #059669;
-    font-size: 18px;
+    color: #f97316;
+    font-size: 16px;
     text-shadow: 0 2px 4px rgba(5, 150, 105, 0.1);
+}
+
+.fa-fire {
+    color: #f97316;
+    margin-right: 5px;
+    font-size: 14px;
 }
 
 .group-name {
@@ -794,7 +797,7 @@ textarea.form-control {
 .rank-badge {
     background: linear-gradient(135deg, #059669, #047857);
     color: white;
-    padding: 4px 12px;
+    padding: 4px 7px;
     border-radius: 20px;
     font-size: 12px;
     font-weight: 600;
@@ -810,7 +813,7 @@ textarea.form-control {
 .group-info {
     display: flex;
     flex-direction: column;
-    align-items: flex-end;
+    align-items: flex-start;
 }
 
 .day-label {
@@ -838,7 +841,7 @@ textarea.form-control {
 
 .group-card .group-name:before,
 .public-group-item .group-name:before {
-    content: '#';
+    /* content: '#'; */
     color: #059669;
     margin-left: 5px;
     font-weight: bold;
@@ -855,3 +858,7 @@ textarea.form-control {
 .public-group-item:active {
     animation: cardPulse 0.3s ease;
 }
+
+
+
+

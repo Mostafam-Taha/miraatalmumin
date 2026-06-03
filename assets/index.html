@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مواقيت الصلاة - إشعارات Telegram</title>
+    <title>مواقيت الصلاة - Aladhan API</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
@@ -48,13 +48,13 @@
             opacity: 0.9;
         }
         
-        .location-section, .telegram-section {
+        .location-section {
             padding: 25px;
             border-bottom: 1px solid #eaeaea;
             background-color: #f9f9f9;
         }
         
-        .location-info, .telegram-info {
+        .location-info {
             display: flex;
             flex-wrap: wrap;
             justify-content: space-between;
@@ -62,24 +62,24 @@
             margin-bottom: 20px;
         }
         
-        .location-details, .telegram-details {
+        .location-details {
             flex: 1;
             min-width: 300px;
         }
         
-        .location-details h2, .telegram-details h2 {
+        .location-details h2 {
             color: #1a5f7a;
             margin-bottom: 10px;
             font-size: 1.8rem;
         }
         
-        .location-details p, .telegram-details p {
+        .location-details p {
             font-size: 1.1rem;
             color: #555;
             margin-bottom: 5px;
         }
         
-        .location-icon, .telegram-icon {
+        .location-icon {
             font-size: 4rem;
             color: #159895;
             margin-left: 20px;
@@ -125,31 +125,11 @@
             transform: translateY(-2px);
         }
         
-        .btn-telegram {
-            background-color: #0088cc;
-            color: white;
-        }
-        
-        .btn-telegram:hover {
-            background-color: #006699;
-            transform: translateY(-2px);
-        }
-        
-        .btn-success {
-            background-color: #28a745;
-            color: white;
-        }
-        
-        .btn-success:hover {
-            background-color: #218838;
-            transform: translateY(-2px);
-        }
-        
-        .prayer-times, .notification-settings {
+        .prayer-times {
             padding: 25px;
         }
         
-        .prayer-header, .notification-header {
+        .prayer-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -157,7 +137,7 @@
             flex-wrap: wrap;
         }
         
-        .prayer-header h2, .notification-header h2 {
+        .prayer-header h2 {
             color: #1a5f7a;
             font-size: 1.8rem;
         }
@@ -230,188 +210,6 @@
             display: inline-block;
         }
         
-        .notification-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 20px;
-            margin-bottom: 25px;
-        }
-        
-        .notification-card {
-            background: white;
-            border-radius: 15px;
-            padding: 20px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-            transition: all 0.3s ease;
-            border-top: 5px solid #0088cc;
-            position: relative;
-        }
-        
-        .notification-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
-        }
-        
-        .notification-card h3 {
-            color: #1a5f7a;
-            margin-bottom: 15px;
-            font-size: 1.4rem;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .notification-option {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid #eee;
-        }
-        
-        .notification-option:last-child {
-            margin-bottom: 0;
-            padding-bottom: 0;
-            border-bottom: none;
-        }
-        
-        .notification-label {
-            font-size: 1.1rem;
-            color: #555;
-        }
-        
-        .switch {
-            position: relative;
-            display: inline-block;
-            width: 60px;
-            height: 30px;
-        }
-        
-        .switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-        
-        .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: #ccc;
-            transition: .4s;
-            border-radius: 34px;
-        }
-        
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 22px;
-            width: 22px;
-            left: 4px;
-            bottom: 4px;
-            background-color: white;
-            transition: .4s;
-            border-radius: 50%;
-        }
-        
-        input:checked + .slider {
-            background-color: #28a745;
-        }
-        
-        input:checked + .slider:before {
-            transform: translateX(30px);
-        }
-        
-        .bot-config {
-            background-color: #f0f7ff;
-            padding: 20px;
-            border-radius: 10px;
-            margin-top: 20px;
-        }
-        
-        .form-group {
-            margin-bottom: 20px;
-        }
-        
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #1a5f7a;
-        }
-        
-        .form-group input {
-            width: 100%;
-            padding: 12px 15px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-        }
-        
-        .form-group input:focus {
-            outline: none;
-            border-color: #159895;
-            box-shadow: 0 0 0 3px rgba(21, 152, 149, 0.2);
-        }
-        
-        .chat-id-section {
-            background-color: #e8f5e9;
-            padding: 15px;
-            border-radius: 8px;
-            margin-top: 15px;
-            border-right: 4px solid #4caf50;
-        }
-        
-        .chat-id-section h4 {
-            color: #2e7d32;
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .chat-id-display {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-            margin-top: 10px;
-        }
-        
-        .chat-id-display input {
-            flex: 1;
-            background-color: #f1f8e9;
-            font-family: monospace;
-        }
-        
-        .help-text {
-            font-size: 0.9rem;
-            color: #666;
-            margin-top: 5px;
-            line-height: 1.5;
-        }
-        
-        .telegram-link {
-            display: inline-block;
-            background-color: #0088cc;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 8px;
-            text-decoration: none;
-            font-weight: 600;
-            margin-top: 10px;
-            transition: all 0.3s ease;
-        }
-        
-        .telegram-link:hover {
-            background-color: #006699;
-            transform: translateY(-2px);
-        }
-        
         .loading {
             text-align: center;
             padding: 40px;
@@ -434,26 +232,6 @@
             margin: 20px;
         }
         
-        .success-message {
-            text-align: center;
-            padding: 15px;
-            background-color: #d4edda;
-            border-radius: 8px;
-            color: #155724;
-            margin: 15px 0;
-            display: none;
-        }
-        
-        .warning-message {
-            text-align: center;
-            padding: 15px;
-            background-color: #fff3cd;
-            border-radius: 8px;
-            color: #856404;
-            margin: 15px 0;
-            border-right: 4px solid #ffc107;
-        }
-        
         footer {
             text-align: center;
             padding: 20px;
@@ -473,21 +251,17 @@
                 font-size: 2rem;
             }
             
-            .location-info, .telegram-info {
+            .location-info {
                 flex-direction: column;
                 text-align: center;
             }
             
-            .location-icon, .telegram-icon {
+            .location-icon {
                 margin: 15px 0;
             }
             
             .prayer-grid {
                 grid-template-columns: repeat(2, 1fr);
-            }
-            
-            .notification-grid {
-                grid-template-columns: 1fr;
             }
             
             .controls {
@@ -503,28 +277,14 @@
             .prayer-time {
                 font-size: 1.8rem;
             }
-            
-            .switch {
-                width: 50px;
-                height: 25px;
-            }
-            
-            .slider:before {
-                height: 17px;
-                width: 17px;
-            }
-            
-            input:checked + .slider:before {
-                transform: translateX(25px);
-            }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
-            <h1><i class="fas fa-mosque"></i> مواقيت الصلاة - إشعارات Telegram</h1>
-            <p>احصل على تذكيرات تلقائية بأوقات الصلاة عبر بوت Telegram الخاص بك</p>
+            <h1><i class="fas fa-mosque"></i> مواقيت الصلاة</h1>
+            <p>احصل على أوقات الصلاة الدقيقة حسب موقعك الجغرافي</p>
         </header>
         
         <section class="location-section">
@@ -549,133 +309,33 @@
                 </button>
             </div>
         </section>
-        
-        <section class="telegram-section">
-            <div class="telegram-info">
-                <div class="telegram-details">
-                    <h2><i class="fab fa-telegram"></i> إعداد إشعارات Telegram</h2>
-                    <p>قم بإعداد بوت Telegram الخاص بك لتلقي تذكيرات تلقائية بأوقات الصلاة</p>
-                    <p id="botStatus" class="help-text">لم يتم إعداد البوت بعد</p>
-                </div>
-                <div class="telegram-icon">
-                    <i class="fab fa-telegram-plane"></i>
-                </div>
+
+        <div class="telegram-settings">
+            <h3><i class="fab fa-telegram"></i> إعدادات Telegram</h3>
+            
+            <div class="setting-item">
+                <label>
+                    <input type="checkbox" id="enablePrayerNotifications" checked>
+                    تفعيل إشعارات الصلاة عبر Telegram
+                </label>
             </div>
             
-            <div class="bot-config">
-                <div class="warning-message" id="chatIdWarning">
-                    <i class="fas fa-exclamation-triangle"></i>
-                    <strong>ملاحظة مهمة:</strong> تحتاج إلى الحصول على معرف المحادثة (Chat ID) للإرسال إلى بوتك. اتبع الخطوات أدناه.
-                </div>
-                
-                <div class="form-group">
-                    <label for="botToken"><i class="fas fa-key"></i> رمز البوت (Bot Token)</label>
-                    <input type="text" id="botToken" placeholder="أدخل رمز البوت الذي حصلت عليه من BotFather">
-                    <p class="help-text">للحصول على رمز البوت، ابحث عن @BotFather في Telegram وأنشئ بوت جديد</p>
-                </div>
-                
-                <div class="form-group">
-                    <label for="botUsername"><i class="fas fa-robot"></i> اسم المستخدم الخاص بالبوت</label>
-                    <input type="text" id="botUsername" placeholder="مثال: MyPrayerBot">
-                </div>
-                
-                <div class="form-group">
-                    <label for="reminderMessage"><i class="fas fa-comment-alt"></i> نص التذكير</label>
-                    <input type="text" id="reminderMessage" placeholder="حان وقت صلاة {prayerName}" value="حان وقت صلاة {prayerName} - {prayerTime}">
-                    <p class="help-text">استخدم {prayerName} لاسم الصلاة، {prayerTime} لوقت الصلاة، {city} لاسم المدينة</p>
-                </div>
-                
-                <div class="chat-id-section">
-                    <h4><i class="fas fa-id-card"></i> معرف المحادثة (Chat ID)</h4>
-                    <p class="help-text">هذا المعرف ضروري لإرسال الرسائل إليك. للحصول عليه:</p>
-                    <ol class="help-text" style="padding-right: 20px; margin-top: 10px;">
-                        <li>ابدأ محادثة مع بوتك في Telegram</li>
-                        <li>أرسل رسالة أي نص للبوت</li>
-                        <li>ارجع إلى هذه الصفحة واضغط على "الحصول على Chat ID"</li>
-                    </ol>
-                    
-                    <div class="chat-id-display">
-                        <input type="text" id="chatId" placeholder="سيظهر هنا بعد الحصول عليه" readonly>
-                        <button class="btn-telegram" id="getChatId">
-                            <i class="fas fa-qrcode"></i> الحصول على Chat ID
-                        </button>
-                    </div>
-                    
-                    <p class="help-text" style="margin-top: 10px; color: #d32f2f;">
-                        <i class="fas fa-info-circle"></i> بدون Chat ID صالح، لا يمكن إرسال الرسائل إليك.
-                    </p>
-                </div>
-                
-                <div class="controls">
-                    <button class="btn-telegram" id="testBot">
-                        <i class="fas fa-vial"></i> اختبار الاتصال بالبوت
-                    </button>
-                    <button class="btn-telegram" id="sendTestMessage">
-                        <i class="fas fa-paper-plane"></i> إرسال رسالة تجريبية
-                    </button>
-                    <button class="btn-success" id="saveBotConfig">
-                        <i class="fas fa-save"></i> حفظ الإعدادات
-                    </button>
-                </div>
-                
-                <div id="successMessage" class="success-message">
-                    <i class="fas fa-check-circle"></i> تم حفظ الإعدادات بنجاح!
-                </div>
-                
-                <div class="help-text" style="margin-top: 20px;">
-                    <p><strong>خطوات إعداد البوت:</strong></p>
-                    <ol style="padding-right: 20px; margin-top: 10px;">
-                        <li>افتح تطبيق Telegram وابحث عن @BotFather</li>
-                        <li>أرسل الأمر /newbot لإنشاء بوت جديد</li>
-                        <li>اختر اسمًا للبوت (مثال: My Prayer Reminder)</li>
-                        <li>اختر اسم مستخدم للبوت ينتهي بـ bot (مثال: MyPrayerReminderBot)</li>
-                        <li>انسخ رمز البوت (Bot Token) وأدخله في الحقل أعلاه</li>
-                        <li>ابدأ محادثة مع البوت الذي أنشأته في Telegram</li>
-                        <li>اضغط على "الحصول على Chat ID"</li>
-                        <li>اضغط على "اختبار الاتصال بالبوت" للتأكد من عمل البوت</li>
-                    </ol>
-                    <a href="https://t.me/botfather" target="_blank" class="telegram-link">
-                        <i class="fab fa-telegram"></i> الانتقال إلى BotFather
-                    </a>
-                </div>
-            </div>
-        </section>
-        
-        <section class="notification-settings">
-            <div class="notification-header">
-                <h2><i class="fas fa-bell"></i> إعداد التذكيرات</h2>
-                <div class="date-info" id="todayDate">جاري التحميل...</div>
+            <div class="setting-item">
+                <label>إرسال الإشعار قبل الصلاة بـ (دقائق):</label>
+                <input type="number" id="prayerNotificationTime" min="1" max="60" value="10">
             </div>
             
-            <div class="notification-grid" id="notificationGrid">
-                <!-- سيتم ملء خيارات التذكير هنا -->
-            </div>
-            
-            <div class="controls">
-                <button class="btn-primary" id="enableAllNotifications">
-                    <i class="fas fa-toggle-on"></i> تفعيل جميع التذكيرات
-                </button>
-                <button class="btn-secondary" id="disableAllNotifications">
-                    <i class="fas fa-toggle-off"></i> تعطيل جميع التذكيرات
+            <div class="setting-item">
+                <button id="testTelegram" class="btn-secondary">
+                    <i class="fas fa-bell"></i> اختبار الإشعار
                 </button>
             </div>
-            
-            <div class="form-group" style="margin-top: 25px;">
-                <label for="advanceMinutes"><i class="fas fa-clock"></i> وقت التذكير المسبق (بالدقائق)</label>
-                <input type="number" id="advanceMinutes" min="0" max="60" value="5" style="width: 100px;">
-                <p class="help-text">عدد الدقائق قبل وقت الصلاة لإرسال التذكير (0 = في نفس وقت الصلاة)</p>
-            </div>
-            
-            <div class="help-text" style="margin-top: 20px; padding: 15px; background-color: #f8f9fa; border-radius: 8px;">
-                <p><strong>ملاحظة:</strong> التذكيرات تعمل فقط عندما تكون هذه الصفحة مفتوحة في متصفحك. 
-                للتشغيل المستمر، يمكنك استخدام خدمة استضافة بسيطة أو ترك نافذة المتصفح مفتوحة.</p>
-            </div>
-        </section>
+        </div>
         
         <section class="prayer-times">
             <div class="prayer-header">
                 <h2><i class="fas fa-pray"></i> أوقات الصلاة اليوم</h2>
-                <div class="date-info" id="prayerDate">جاري التحميل...</div>
+                <div class="date-info" id="todayDate">جاري التحميل...</div>
             </div>
             
             <div id="loading" class="loading">
@@ -685,7 +345,7 @@
             
             <div id="prayerContainer" style="display: none;">
                 <div class="prayer-grid" id="prayerGrid">
-                    <!-- سيتم ملء أوقات الصلاة هنا -->
+                    <!-- سيتم ملء أوقات الصلاة هنا بواسطة JavaScript -->
                 </div>
             </div>
             
@@ -700,39 +360,76 @@
         </footer>
     </div>
 
+
+    <!-- أضف هذا في مكان مناسب في صفحتك، مثلاً بعد قسم أوقات الصلاة -->
+<section class="telegram-settings-section">
+    <div class="container">
+        <div class="telegram-settings">
+            <h2><i class="fab fa-telegram"></i> إعدادات إشعارات Telegram</h2>
+            
+            <div class="setting-group">
+                <div class="setting-item">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="enablePrayerNotifications" checked>
+                        <span class="checkmark"></span>
+                        تفعيل إشعارات الصلاة عبر Telegram
+                    </label>
+                    <p class="setting-description">ستصلك إشعارات قبل كل صلاة عبر بوت Telegram</p>
+                </div>
+                
+                <div class="setting-item">
+                    <label for="prayerNotificationTime">إرسال الإشعار قبل الصلاة بـ (دقائق):</label>
+                    <div class="time-input">
+                        <input type="range" id="prayerNotificationTimeRange" min="1" max="60" value="10">
+                        <input type="number" id="prayerNotificationTime" min="1" max="60" value="10">
+                        <span>دقيقة</span>
+                    </div>
+                </div>
+                
+                <div class="setting-item">
+                    <label>بيانات البوت:</label>
+                    <div class="bot-info">
+                        <div class="input-group">
+                            <label for="telegramToken">Token البوت:</label>
+                            <input type="password" id="telegramToken" placeholder="أدخل token البوت">
+                        </div>
+                        <div class="input-group">
+                            <label for="telegramChatId">Chat ID:</label>
+                            <input type="text" id="telegramChatId" placeholder="أدخل Chat ID">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="actions">
+                    <button id="saveTelegramSettings" class="btn-primary">
+                        <i class="fas fa-save"></i> حفظ الإعدادات
+                    </button>
+                    <button id="testTelegram" class="btn-secondary">
+                        <i class="fas fa-bell"></i> اختبار الإشعار
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- حاوية للإشعارات -->
+<div id="notifications"></div>
+
     <script>
         // عناصر DOM
         const cityElement = document.getElementById('city');
         const countryElement = document.getElementById('country');
         const coordinatesElement = document.getElementById('coordinates');
         const todayDateElement = document.getElementById('todayDate');
-        const prayerDateElement = document.getElementById('prayerDate');
         const prayerGrid = document.getElementById('prayerGrid');
-        const notificationGrid = document.getElementById('notificationGrid');
         const loadingElement = document.getElementById('loading');
         const prayerContainer = document.getElementById('prayerContainer');
         const errorContainer = document.getElementById('errorContainer');
-        const successMessage = document.getElementById('successMessage');
-        const chatIdWarning = document.getElementById('chatIdWarning');
-        
-        // الأزرار
         const getPrayerTimesBtn = document.getElementById('getPrayerTimes');
         const refreshLocationBtn = document.getElementById('refreshLocation');
-        const testBotBtn = document.getElementById('testBot');
-        const sendTestMessageBtn = document.getElementById('sendTestMessage');
-        const getChatIdBtn = document.getElementById('getChatId');
-        const saveBotConfigBtn = document.getElementById('saveBotConfig');
-        const enableAllBtn = document.getElementById('enableAllNotifications');
-        const disableAllBtn = document.getElementById('disableAllNotifications');
         
-        // عناصر إعدادات البوت
-        const botTokenInput = document.getElementById('botToken');
-        const botUsernameInput = document.getElementById('botUsername');
-        const reminderMessageInput = document.getElementById('reminderMessage');
-        const chatIdInput = document.getElementById('chatId');
-        const advanceMinutesInput = document.getElementById('advanceMinutes');
-        
-        // بيانات التطبيق
+        // بيانات الموقع الافتراضية (سيتغير بناءً على موقع المستخدم)
         let userLocation = {
             latitude: null,
             longitude: null,
@@ -740,26 +437,10 @@
             country: 'غير محدد'
         };
         
+        // بيانات أوقات الصلاة
         let prayerTimes = null;
-        let botConfig = {
-            token: '',
-            username: '',
-            chatId: '',
-            reminderMessage: 'حان وقت صلاة {prayerName} - {prayerTime}',
-            enabledPrayers: {
-                Fajr: true,
-                Sunrise: true,
-                Dhuhr: true,
-                Asr: true,
-                Maghrib: true,
-                Isha: true
-            },
-            advanceMinutes: 5
-        };
         
-        let nextReminderTimer = null;
-        
-        // أسماء الصلوات بالعربية وبياناتها
+        // أسماء الصلوات بالعربية وروابط الأيقونات
         const prayers = [
             { name: 'الفجر', key: 'Fajr', icon: 'fas fa-sun' },
             { name: 'الشروق', key: 'Sunrise', icon: 'fas fa-sunrise' },
@@ -769,23 +450,13 @@
             { name: 'العشاء', key: 'Isha', icon: 'fas fa-moon' }
         ];
         
-        // عند تحميل الصفحة
+        // عند تحميل الصفحة، نجلب موقع المستخدم
         document.addEventListener('DOMContentLoaded', function() {
             getCurrentLocation();
             updateDate();
-            loadBotConfig();
-            setupNotificationOptions();
-            updateBotStatus();
-            
-            // تحميل أوقات الصلاة بعد 2 ثانية
-            setTimeout(() => {
-                if (userLocation.latitude && userLocation.longitude) {
-                    fetchPrayerTimes();
-                }
-            }, 2000);
         });
         
-        // أحداث الأزرار
+        // زر الحصول على أوقات الصلاة
         getPrayerTimesBtn.addEventListener('click', function() {
             if (userLocation.latitude && userLocation.longitude) {
                 fetchPrayerTimes();
@@ -795,18 +466,12 @@
             }
         });
         
+        // زر تحديث الموقع
         refreshLocationBtn.addEventListener('click', function() {
             getCurrentLocation();
         });
         
-        testBotBtn.addEventListener('click', testBotConnection);
-        sendTestMessageBtn.addEventListener('click', sendTestMessage);
-        getChatIdBtn.addEventListener('click', getChatIdFromBot);
-        saveBotConfigBtn.addEventListener('click', saveBotConfig);
-        enableAllBtn.addEventListener('click', enableAllNotifications);
-        disableAllBtn.addEventListener('click', disableAllNotifications);
-        
-        // دالة للحصول على الموقع الحالي
+        // دالة للحصول على الموقع الحالي للمستخدم
         function getCurrentLocation() {
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(
@@ -814,12 +479,15 @@
                         userLocation.latitude = position.coords.latitude;
                         userLocation.longitude = position.coords.longitude;
                         
+                        // تحديث واجهة الموقع
                         coordinatesElement.textContent = `${userLocation.latitude.toFixed(4)}, ${userLocation.longitude.toFixed(4)}`;
+                        
+                        // نحصل على اسم المدينة والدولة باستخدام API عكسي للجغرافيا
                         reverseGeocode(userLocation.latitude, userLocation.longitude);
                     },
                     function(error) {
                         console.error('خطأ في الحصول على الموقع:', error);
-                        // استخدام موقع افتراضي (مكة المكرمة)
+                        // استخدام موقع افتراضي (مكة المكرمة) في حالة رفض الإذن
                         userLocation.latitude = 21.4225;
                         userLocation.longitude = 39.8262;
                         userLocation.city = 'مكة المكرمة';
@@ -830,50 +498,101 @@
                     }
                 );
             } else {
-                alert('متصفحك لا يدعم خدمة تحديد الموقع');
+                alert('متصفحك لا يدخدم خدمة تحديد الموقع');
             }
         }
         
-        // دالة لعكس الجغرافيا
-        function reverseGeocode(lat, lng) {
-            fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.address) {
-                        userLocation.city = data.address.city || data.address.town || data.address.village || 'غير معروف';
-                        userLocation.country = data.address.country || 'غير معروف';
-                        updateLocationUI();
-                    }
-                })
-                .catch(error => {
-                    console.error('خطأ في عكس الجغرافيا:', error);
-                    userLocation.city = 'غير معروف';
-                    userLocation.country = 'غير معروف';
-                    updateLocationUI();
-                });
-        }
+// دالة لعكس الجغرافيا (الحصول على اسم المدينة والدولة من الإحداثيات)
+function reverseGeocode(lat, lng) {
+    // استخدام Proxy على الخادم بدلاً من API مباشرة
+    fetch(`proxy.php?lat=${lat}&lon=${lng}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data && data.address) {
+                userLocation.city = data.address.city || 
+                                   data.address.town || 
+                                   data.address.village || 
+                                   data.address.county || 
+                                   'غير معروف';
+                userLocation.country = data.address.country || 'غير معروف';
+                updateLocationUI();
+            } else {
+                userLocation.city = 'غير معروف';
+                userLocation.country = 'غير معروف';
+                updateLocationUI();
+            }
+        })
+        .catch(error => {
+            console.error('خطأ في عكس الجغرافيا:', error);
+            // استخدام API بديل
+            fallbackGeocode(lat, lng);
+        });
+}
+
+// دالة احتياطية لـ API بديل
+function fallbackGeocode(lat, lng) {
+    // استخدام API بديل لا يحتاج إلى CORS
+    const geodbApi = `https://geodb-cities-api.wirefreethought.com/v1/geo/locations/${lat}${lng}/nearbyCities?limit=1`;
+    
+    fetch(geodbApi)
+        .then(response => response.json())
+        .then(data => {
+            if (data.data && data.data.length > 0) {
+                userLocation.city = data.data[0].city || 'غير معروف';
+                userLocation.country = data.data[0].country || 'غير معروف';
+                updateLocationUI();
+            } else {
+                // إذا فشل جميع المحاولات
+                getCityFromPrayerAPI(lat, lng);
+            }
+        })
+        .catch(error => {
+            console.error('خطأ في API البديل:', error);
+            getCityFromPrayerAPI(lat, lng);
+        });
+}
+
+// استخدام Aladhan API للحصول على معلومات الموقع
+function getCityFromPrayerAPI(lat, lng) {
+    const apiUrl = `https://api.aladhan.com/v1/calendar?latitude=${lat}&longitude=${lng}&method=2`;
+    
+    fetch(apiUrl)
+        .then(response => response.json())
+        .then(data => {
+            if (data.code === 200) {
+                // Aladhan API قد تعيد اسم المدينة في بعض الأحيان
+                userLocation.city = 'مكة المكرمة'; // قيمة افتراضية
+                userLocation.country = 'السعودية';
+                updateLocationUI();
+            } else {
+                userLocation.city = 'غير معروف';
+                userLocation.country = 'غير معروف';
+                updateLocationUI();
+            }
+        });
+}
         
-        // تحديث واجهة بيانات الموقع
+        // دالة لتحديث واجهة بيانات الموقع
         function updateLocationUI() {
             cityElement.textContent = `المدينة: ${userLocation.city}`;
             countryElement.textContent = `الدولة: ${userLocation.country}`;
         }
         
-        // تحديث التاريخ
+        // دالة لتحديث التاريخ الحالي
         function updateDate() {
             const now = new Date();
             const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-            const dateString = now.toLocaleDateString('ar-SA', options);
-            todayDateElement.textContent = dateString;
-            prayerDateElement.textContent = dateString;
+            todayDateElement.textContent = now.toLocaleDateString('ar-SA', options);
         }
         
-        // جلب أوقات الصلاة
+        // دالة لجلب أوقات الصلاة من Aladhan API
         function fetchPrayerTimes() {
+            // إظهار مؤشر التحميل
             loadingElement.style.display = 'block';
             prayerContainer.style.display = 'none';
             errorContainer.style.display = 'none';
             
+            // استخدام Aladhan API للحصول على أوقات الصلاة
             const apiUrl = `https://api.aladhan.com/v1/timings?latitude=${userLocation.latitude}&longitude=${userLocation.longitude}&method=2`;
             
             fetch(apiUrl)
@@ -887,8 +606,6 @@
                     if (data.code === 200) {
                         prayerTimes = data.data.timings;
                         displayPrayerTimes();
-                        updateNotificationTimes();
-                        scheduleNextReminder();
                     } else {
                         throw new Error('API returned an error');
                     }
@@ -900,19 +617,25 @@
                 });
         }
         
-        // عرض أوقات الصلاة
+        // دالة لعرض أوقات الصلاة
         function displayPrayerTimes() {
+            // إخفاء مؤشر التحميل وإظهار النتائج
             loadingElement.style.display = 'none';
             prayerContainer.style.display = 'block';
+            
+            // مسح المحتوى القديم
             prayerGrid.innerHTML = '';
             
+            // إنشاء بطاقات الصلوات
             prayers.forEach(prayer => {
                 const prayerTime = prayerTimes[prayer.key];
                 if (prayerTime) {
                     const prayerCard = document.createElement('div');
                     prayerCard.className = 'prayer-card';
                     
+                    // تحديد إذا كانت هذه الصلاة هي القادمة
                     const isNextPrayer = checkIfNextPrayer(prayer.key);
+                    
                     if (isNextPrayer) {
                         prayerCard.classList.add('active');
                     }
@@ -931,18 +654,17 @@
             });
         }
         
-        // تنسيق وقت الصلاة
+        // دالة لتنسيق وقت الصلاة (إزالة +00)
         function formatPrayerTime(timeStr) {
             return timeStr.split(' ')[0];
         }
         
-        // التحقق من الصلاة القادمة
+        // دالة للتحقق من الصلاة القادمة
         function checkIfNextPrayer(prayerKey) {
-            if (!prayerTimes) return false;
-            
             const now = new Date();
-            const currentTime = now.getHours() * 60 + now.getMinutes();
+            const currentTime = now.getHours() * 60 + now.getMinutes(); // الوقت الحالي بالدقائق
             
+            // تحويل أوقات الصلاة إلى دقائق للمقارنة
             const prayerTimesInMinutes = {};
             
             prayers.forEach(prayer => {
@@ -954,8 +676,9 @@
                 }
             });
             
+            // البحث عن الصلاة القادمة
             let nextPrayerKey = null;
-            let minDifference = 24 * 60;
+            let minDifference = 24 * 60; // فرق كبير في البداية
             
             for (const key in prayerTimesInMinutes) {
                 const difference = prayerTimesInMinutes[key] - currentTime;
@@ -965,6 +688,7 @@
                 }
             }
             
+            // إذا لم نجد صلاة قادمة (أي أننا بعد العشاء)، فإن الفجر هو التالي
             if (!nextPrayerKey) {
                 nextPrayerKey = 'Fajr';
             }
@@ -972,392 +696,189 @@
             return nextPrayerKey === prayerKey;
         }
         
-        // إعداد خيارات الإشعارات
-        function setupNotificationOptions() {
-            notificationGrid.innerHTML = '';
+        // جلب أوقات الصلاة تلقائياً عند تحديد الموقع
+        setTimeout(() => {
+            if (userLocation.latitude && userLocation.longitude) {
+                fetchPrayerTimes();
+            }
+        }, 2000);
+
+
+        // إعدادات Telegram
+        const telegramSettings = {
+            enablePrayerNotifications: true,
+            prayerNotificationTime: 10
+        };
+
+        // دالة لحفظ إعدادات Telegram
+        function saveTelegramSettings() {
+            const settings = {
+                user_id: getUserId(), // تحتاج لدالة تحصل على ID المستخدم
+                prayer_notifications: telegramSettings.enablePrayerNotifications ? 1 : 0,
+                prayer_notification_time: telegramSettings.prayerNotificationTime
+            };
             
-            prayers.forEach(prayer => {
-                const notificationCard = document.createElement('div');
-                notificationCard.className = 'notification-card';
-                
-                const isEnabled = botConfig.enabledPrayers[prayer.key] || false;
-                
-                notificationCard.innerHTML = `
-                    <h3><i class="${prayer.icon}"></i> ${prayer.name}</h3>
-                    <div class="notification-option">
-                        <span class="notification-label">تفعيل التذكير</span>
-                        <label class="switch">
-                            <input type="checkbox" id="notify_${prayer.key}" ${isEnabled ? 'checked' : ''}>
-                            <span class="slider"></span>
-                        </label>
-                    </div>
-                    <div class="notification-option">
-                        <span class="notification-label">وقت الصلاة</span>
-                        <span id="time_${prayer.key}" class="notification-label">--:--</span>
-                    </div>
-                `;
-                
-                notificationGrid.appendChild(notificationCard);
-                
-                // إضافة حدث لمفتاح التبديل
-                const switchElement = notificationCard.querySelector(`#notify_${prayer.key}`);
-                switchElement.addEventListener('change', function() {
-                    botConfig.enabledPrayers[prayer.key] = this.checked;
-                    saveBotConfigToStorage();
-                });
-            });
-        }
-        
-        // تحديث أوقات الصلاة في قسم الإشعارات
-        function updateNotificationTimes() {
-            if (!prayerTimes) return;
-            
-            prayers.forEach(prayer => {
-                const timeElement = document.getElementById(`time_${prayer.key}`);
-                if (timeElement && prayerTimes[prayer.key]) {
-                    timeElement.textContent = formatPrayerTime(prayerTimes[prayer.key]);
+            fetch('save_telegram_settings.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(settings)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showNotification('تم حفظ الإعدادات بنجاح');
                 }
             });
         }
-        
-        // اختبار اتصال البوت
-        async function testBotConnection() {
-            const token = botTokenInput.value.trim();
-            
-            if (!token) {
-                alert('يرجى إدخال رمز البوت أولاً');
-                return;
-            }
-            
-            try {
-                testBotBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري الاختبار...';
-                testBotBtn.disabled = true;
-                
-                // اختبار واجهة برمجة تطبيقات Telegram
-                const response = await fetch(`https://api.telegram.org/bot${token}/getMe`);
-                const data = await response.json();
-                
-                if (data.ok) {
-                    alert(`✅ تم الاتصال بالبوت بنجاح!\n\nاسم البوت: ${data.result.first_name}\nمعرف البوت: @${data.result.username}`);
-                    
-                    // تحديث اسم المستخدم تلقائيًا
-                    botUsernameInput.value = data.result.username;
-                    updateBotStatus(true, data.result.first_name);
-                } else {
-                    throw new Error(data.description || 'فشل الاتصال بالبوت');
-                }
-            } catch (error) {
-                console.error('خطأ في اختبار البوت:', error);
-                alert(`❌ فشل الاتصال بالبوت: ${error.message}`);
-                updateBotStatus(false);
-            } finally {
-                testBotBtn.innerHTML = '<i class="fas fa-vial"></i> اختبار الاتصال بالبوت';
-                testBotBtn.disabled = false;
-            }
-        }
-        
-        // الحصول على Chat ID من البوت
-        async function getChatIdFromBot() {
-            const token = botTokenInput.value.trim();
-            
-            if (!token) {
-                alert('يرجى إدخال رمز البوت أولاً');
-                return;
-            }
-            
-            try {
-                getChatIdBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري البحث...';
-                getChatIdBtn.disabled = true;
-                
-                // الحصول على آخر التحديثات
-                const response = await fetch(`https://api.telegram.org/bot${token}/getUpdates`);
-                const data = await response.json();
-                
-                if (data.ok && data.result.length > 0) {
-                    // البحث عن آخر رسالة تحتوي على chat id
-                    const lastUpdate = data.result[data.result.length - 1];
-                    let chatId = null;
-                    
-                    if (lastUpdate.message) {
-                        chatId = lastUpdate.message.chat.id;
-                    } else if (lastUpdate.channel_post) {
-                        chatId = lastUpdate.channel_post.chat.id;
-                    } else if (lastUpdate.edited_message) {
-                        chatId = lastUpdate.edited_message.chat.id;
-                    }
-                    
-                    if (chatId) {
-                        chatIdInput.value = chatId;
-                        botConfig.chatId = chatId;
-                        saveBotConfigToStorage();
-                        
-                        alert(`✅ تم الحصول على Chat ID: ${chatId}`);
-                        chatIdWarning.style.display = 'none';
-                    } else {
-                        throw new Error('لم يتم العثور على Chat ID في التحديثات. يرجى إرسال رسالة إلى البوت أولاً.');
-                    }
-                } else {
-                    throw new Error('لم يتم العثور على تحديثات. يرجى إرسال رسالة إلى البوت أولاً.');
-                }
-            } catch (error) {
-                console.error('خطأ في الحصول على Chat ID:', error);
-                alert(`❌ فشل الحصول على Chat ID: ${error.message}\n\nيرجى التأكد من:\n1. بدأت محادثة مع البوت\n2. أرسلت رسالة إلى البوت\n3. انتظرت بضع ثواني ثم حاول مرة أخرى`);
-            } finally {
-                getChatIdBtn.innerHTML = '<i class="fas fa-qrcode"></i> الحصول على Chat ID';
-                getChatIdBtn.disabled = false;
-            }
-        }
-        
-        // إرسال رسالة تجريبية
-        async function sendTestMessage() {
-            const token = botTokenInput.value.trim();
-            const chatId = chatIdInput.value.trim();
-            
-            if (!token) {
-                alert('يرجى إدخال رمز البوت أولاً');
-                return;
-            }
-            
-            if (!chatId) {
-                alert('يرجى الحصول على Chat ID أولاً');
-                return;
-            }
-            
-            try {
-                sendTestMessageBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري الإرسال...';
-                sendTestMessageBtn.disabled = true;
-                
-                const message = `🔔 اختبار: بوت التذكير بأوقات الصلاة يعمل بشكل صحيح!\n\n📍 الموقع: ${userLocation.city}\n📅 التاريخ: ${new Date().toLocaleDateString('ar-SA')}`;
-                
-                const response = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        chat_id: chatId,
-                        text: message,
-                        parse_mode: 'HTML'
-                    })
-                });
-                
-                const data = await response.json();
-                
-                if (data.ok) {
-                    alert(`✅ تم إرسال الرسالة التجريبية بنجاح!\n\nرقم الرسالة: ${data.result.message_id}`);
-                } else {
-                    throw new Error(data.description || 'فشل إرسال الرسالة');
-                }
-            } catch (error) {
-                console.error('خطأ في إرسال الرسالة:', error);
-                alert(`❌ فشل إرسال الرسالة: ${error.message}`);
-            } finally {
-                sendTestMessageBtn.innerHTML = '<i class="fas fa-paper-plane"></i> إرسال رسالة تجريبية';
-                sendTestMessageBtn.disabled = false;
-            }
-        }
-        
-        // حفظ إعدادات البوت
-        function saveBotConfig() {
-            botConfig.token = botTokenInput.value.trim();
-            botConfig.username = botUsernameInput.value.trim();
-            botConfig.chatId = chatIdInput.value.trim();
-            botConfig.reminderMessage = reminderMessageInput.value.trim() || 'حان وقت صلاة {prayerName} - {prayerTime}';
-            botConfig.advanceMinutes = parseInt(advanceMinutesInput.value) || 5;
-            
-            saveBotConfigToStorage();
-            
-            // عرض رسالة النجاح
-            successMessage.style.display = 'block';
-            setTimeout(() => {
-                successMessage.style.display = 'none';
-            }, 3000);
-            
-            // إعادة جدولة التذكيرات
-            scheduleNextReminder();
-        }
-        
-        // حفظ الإعدادات في localStorage
-        function saveBotConfigToStorage() {
-            localStorage.setItem('prayerBotConfig', JSON.stringify(botConfig));
-            updateBotStatus();
-        }
-        
-        // تحميل إعدادات البوت من localStorage
-        function loadBotConfig() {
-            const savedConfig = localStorage.getItem('prayerBotConfig');
-            if (savedConfig) {
-                try {
-                    const parsedConfig = JSON.parse(savedConfig);
-                    botConfig = { ...botConfig, ...parsedConfig };
-                    
-                    // تحديث واجهة المستخدم
-                    botTokenInput.value = botConfig.token;
-                    botUsernameInput.value = botConfig.username;
-                    chatIdInput.value = botConfig.chatId;
-                    reminderMessageInput.value = botConfig.reminderMessage;
-                    advanceMinutesInput.value = botConfig.advanceMinutes;
-                    
-                    // تحديث مفاتيح التبديل
-                    prayers.forEach(prayer => {
-                        const switchElement = document.getElementById(`notify_${prayer.key}`);
-                        if (switchElement) {
-                            switchElement.checked = botConfig.enabledPrayers[prayer.key] || false;
-                        }
-                    });
-                } catch (error) {
-                    console.error('خطأ في تحميل إعدادات البوت:', error);
-                }
-            }
-        }
-        
-        // تحديث حالة البوت المعروضة
-        function updateBotStatus(isConnected, botName) {
-            const botStatusElement = document.getElementById('botStatus');
-            
-            if (botConfig.token) {
-                if (botConfig.chatId) {
-                    if (isConnected === true) {
-                        botStatusElement.innerHTML = `<span style="color: green;"><i class="fas fa-check-circle"></i> متصل - ${botName} (Chat ID: ${botConfig.chatId})</span>`;
-                    } else {
-                        botStatusElement.innerHTML = `<span style="color: orange;"><i class="fas fa-exclamation-circle"></i> تم الإعداد - Chat ID: ${botConfig.chatId}</span>`;
-                    }
-                    chatIdWarning.style.display = 'none';
-                } else {
-                    botStatusElement.innerHTML = `<span style="color: orange;"><i class="fas fa-exclamation-circle"></i> تم إدخال رمز البوت - يحتاج Chat ID</span>`;
-                    chatIdWarning.style.display = 'block';
-                }
-            } else {
-                botStatusElement.innerHTML = `<span style="color: red;"><i class="fas fa-times-circle"></i> لم يتم إعداد البوت بعد</span>`;
-                chatIdWarning.style.display = 'block';
-            }
-        }
-        
-        // تفعيل جميع التذكيرات
-        function enableAllNotifications() {
-            prayers.forEach(prayer => {
-                botConfig.enabledPrayers[prayer.key] = true;
-                const switchElement = document.getElementById(`notify_${prayer.key}`);
-                if (switchElement) {
-                    switchElement.checked = true;
+
+        // اختبار إرسال إشعار
+        document.getElementById('testTelegram').addEventListener('click', function() {
+            fetch('test_telegram.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    user_id: getUserId()
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showNotification('تم إرسال الإشعار التجريبي');
                 }
             });
-            saveBotConfigToStorage();
-        }
+        });
+
+
+
+        // دالة للحصول على ID المستخدم من localStorage أو Session
+function getUserId() {
+    // محاولة الحصول من localStorage أولاً
+    let userId = localStorage.getItem('user_id');
+    
+    if (!userId) {
+        // إذا لم يكن موجوداً، يمكنك:
+        // 1. استخدام قيمة افتراضية للاختبار
+        userId = '1'; // أو أي ID افتراضي
         
-        // تعطيل جميع التذكيرات
-        function disableAllNotifications() {
-            prayers.forEach(prayer => {
-                botConfig.enabledPrayers[prayer.key] = false;
-                const switchElement = document.getElementById(`notify_${prayer.key}`);
-                if (switchElement) {
-                    switchElement.checked = false;
-                }
-            });
-            saveBotConfigToStorage();
+        // 2. أو طلب تسجيل الدخول
+        // redirectToLogin();
+    }
+    
+    return userId;
+}
+
+// دالة للحصول على token Telegram للمستخدم
+function getUserTelegramToken() {
+    return localStorage.getItem('telegram_token') || '';
+}
+
+// دالة للحصول على chat_id Telegram للمستخدم
+function getUserChatId() {
+    return localStorage.getItem('telegram_chat_id') || '';
+}
+
+// دالة لعرض إشعار للمستخدم
+function showNotification(message, type = 'success') {
+    // إنصراف عنصر الإشعار
+    const notification = document.createElement('div');
+    notification.className = `notification ${type}`;
+    notification.innerHTML = `
+        <div class="notification-content">
+            <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i>
+            <span>${message}</span>
+        </div>
+        <button class="notification-close">
+            <i class="fas fa-times"></i>
+        </button>
+    `;
+    
+    // إضافة للإشعارات إلى الصفحة
+    const container = document.getElementById('notifications') || createNotificationContainer();
+    container.appendChild(notification);
+    
+    // إزالة الإشعار بعد 5 ثواني
+    setTimeout(() => {
+        notification.remove();
+    }, 5000);
+    
+    // إضافة حدث إغلاق
+    notification.querySelector('.notification-close').addEventListener('click', () => {
+        notification.remove();
+    });
+}
+
+// دالة لإنشاء حاوية الإشعارات إذا لم تكن موجودة
+function createNotificationContainer() {
+    const container = document.createElement('div');
+    container.id = 'notifications';
+    container.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 1000;
+        max-width: 350px;
+    `;
+    document.body.appendChild(container);
+    return container;
+}
+
+// أضف هذا CSS للإشعارات
+const notificationStyles = `
+    .notification {
+        background: white;
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 10px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        border-left: 4px solid #159895;
+        animation: slideIn 0.3s ease;
+    }
+    
+    .notification.error {
+        border-left-color: #e74c3c;
+    }
+    
+    .notification.warning {
+        border-left-color: #f39c12;
+    }
+    
+    .notification-content {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .notification-close {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: #999;
+        margin-left: auto;
+        padding: 0;
+        width: 20px;
+        height: 20px;
+    }
+    
+    @keyframes slideIn {
+        from {
+            transform: translateX(100%);
+            opacity: 0;
         }
-        
-        // جدولة التذكير القادم
-        function scheduleNextReminder() {
-            if (!prayerTimes || !botConfig.token || !botConfig.chatId) {
-                console.log('لا يمكن جدولة التذكير: بيانات غير مكتملة');
-                return;
-            }
-            
-            // إلغاء المؤقت السابق
-            if (nextReminderTimer) {
-                clearTimeout(nextReminderTimer);
-            }
-            
-            const now = new Date();
-            const currentTime = now.getHours() * 60 + now.getMinutes();
-            const advanceMinutes = botConfig.advanceMinutes || 0;
-            
-            let nextPrayer = null;
-            let minDifference = 24 * 60;
-            
-            // البحث عن أقرب صلاة مفعلة
-            prayers.forEach(prayer => {
-                if (prayerTimes[prayer.key] && botConfig.enabledPrayers[prayer.key]) {
-                    const timeParts = prayerTimes[prayer.key].split(':');
-                    const prayerTime = parseInt(timeParts[0]) * 60 + parseInt(timeParts[1]);
-                    let difference = prayerTime - advanceMinutes - currentTime;
-                    
-                    // إذا كان الوقت قد فات اليوم، نضيف 24 ساعة
-                    if (difference < 0) {
-                        difference += 24 * 60;
-                    }
-                    
-                    if (difference < minDifference) {
-                        minDifference = difference;
-                        nextPrayer = prayer;
-                    }
-                }
-            });
-            
-            if (nextPrayer) {
-                const timeParts = prayerTimes[nextPrayer.key].split(':');
-                const prayerTime = parseInt(timeParts[0]) * 60 + parseInt(timeParts[1]);
-                
-                // حساب الوقت حتى التذكير التالي (بالمللي ثانية)
-                let timeUntilReminder = minDifference * 60 * 1000;
-                
-                console.log(`سيتم إرسال تذكير لصلاة ${nextPrayer.name} بعد ${Math.round(timeUntilReminder / 60000)} دقيقة`);
-                
-                // جدولة التذكير
-                nextReminderTimer = setTimeout(() => {
-                    sendPrayerReminder(nextPrayer);
-                    scheduleNextReminder(); // جدولة التذكير التالي
-                }, timeUntilReminder);
-            } else {
-                console.log('لا توجد صلوات مفعلة للتذكير');
-            }
+        to {
+            transform: translateX(0);
+            opacity: 1;
         }
-        
-        // إرسال تذكير الصلاة
-        async function sendPrayerReminder(prayer) {
-            if (!botConfig.token || !botConfig.chatId || !prayerTimes) {
-                console.log('لا يمكن إرسال التذكير: بيانات غير مكتملة');
-                return;
-            }
-            
-            try {
-                const prayerTime = formatPrayerTime(prayerTimes[prayer.key]);
-                
-                // تنسيق رسالة التذكير
-                let message = botConfig.reminderMessage
-                    .replace(/{prayerName}/g, prayer.name)
-                    .replace(/{prayerTime}/g, prayerTime)
-                    .replace(/{city}/g, userLocation.city);
-                
-                // إضافة الوقت المتبقي للتذكير المسبق
-                if (botConfig.advanceMinutes > 0) {
-                    message += `\n⏰ (تذكير مسبق: ${botConfig.advanceMinutes} دقيقة)`;
-                }
-                
-                const response = await fetch(`https://api.telegram.org/bot${botConfig.token}/sendMessage`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        chat_id: botConfig.chatId,
-                        text: message,
-                        parse_mode: 'HTML'
-                    })
-                });
-                
-                const data = await response.json();
-                
-                if (data.ok) {
-                    console.log(`✅ تم إرسال تذكير صلاة ${prayer.name} بنجاح`);
-                } else {
-                    console.error('❌ فشل إرسال التذكير:', data.description);
-                }
-            } catch (error) {
-                console.error('خطأ في إرسال التذكير:', error);
-            }
-        }
+    }
+`;
+
+// إضافة الأنماط للصفحة
+const styleSheet = document.createElement('style');
+styleSheet.textContent = notificationStyles;
+document.head.appendChild(styleSheet);
     </script>
 </body>
 </html>

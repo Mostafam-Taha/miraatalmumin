@@ -261,6 +261,8 @@ body {
 .item-foot a.active,
 .item-foot a:hover {
     color: #059669;
+    border-radius: 15px !important;
+    padding: 5px 15px;
     background: rgba(5, 150, 105, 0.1);
     transform: translateY(-5px);
 }

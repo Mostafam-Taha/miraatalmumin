@@ -1,7 +1,10 @@
 <?php
+require_once 'includes/session_config.php';
+
 session_start();
+
+// إذا كان المستخدم مسجلاً بالفعل، ارجع إلى الصفحة الرئيسية
 if (isset($_SESSION['user_id'])) {
-    // إذا كان المستخدم مسجلاً بالفعل، ارجع إلى الصفحة الرئيسية
     if (isset($_GET['redirect'])) {
         header('Location: ' . $_GET['redirect']);
     } else {
@@ -9,6 +12,7 @@ if (isset($_SESSION['user_id'])) {
     }
     exit();
 }
+
 ?>
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
@@ -18,16 +22,103 @@ if (isset($_SESSION['user_id'])) {
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200..1000&family=Tajawal:wght@200;300;400;500;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="assets/css/login.css">
-    <title>Login - Miraatalmumin</title>
+    <title>تسجيل الدخول - مرآة المؤمن</title>
+    <style>
+        /* تحسينات إضافية للواجهة */
+        .device-info {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border-radius: 12px;
+            padding: 12px 15px;
+            margin-top: 20px;
+            font-size: 12px;
+            color: #64748b;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .device-info i {
+            color: #059669;
+        }
+        
+        .device-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 10px;
+            background: #e2e8f0;
+            border-radius: 20px;
+            font-size: 11px;
+        }
+        
+        .session-warning {
+            background: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            padding: 12px 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            color: #92400e;
+            display: none;
+        }
+        
+        .session-warning.show {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .session-warning i {
+            font-size: 18px;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        .secure-badge {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: rgba(5, 150, 105, 0.1);
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            color: #059669;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+    </style>
 </head>
 <body>
     <div class="login-container">
+        <div class="secure-badge">
+            <i class="fas fa-shield-alt"></i>
+            <span>تسجيل دخول آمن</span>
+        </div>
+        
         <div class="logo-container">
             <div class="logo-icon">
                 <i class="fas fa-pray"></i>
             </div>
-            <h1 class="app-title">متابعة الصلوات</h1>
+            <h1 class="app-title">مرآة المؤمن</h1>
             <p class="app-subtitle">سجل دخولك لمتابعة صلواتك اليومية ومراجعة تقدمك الروحي</p>
+        </div>
+        
+        <!-- رسالة انتهاء الجلسة -->
+        <div class="session-warning" id="sessionWarning">
+            <i class="fas fa-clock"></i>
+            <span>انتهت صلاحية الجلسة السابقة، يرجى تسجيل الدخول مرة أخرى</span>
+        </div>
+        
+        <!-- معلومات الجهاز الحالي -->
+        <div class="device-info" id="deviceInfo">
+            <i class="fas fa-mobile-alt"></i>
+            <span>جاري تحديد معلومات جهازك...</span>
         </div>
         
         <div class="features">
@@ -42,6 +133,10 @@ if (isset($_SESSION['user_id'])) {
             <div class="feature-item">
                 <i class="fas fa-users"></i>
                 <span>مجموعات داعمة</span>
+            </div>
+            <div class="feature-item">
+                <i class="fas fa-mobile-alt"></i>
+                <span>إدارة الأجهزة المتصلة</span>
             </div>
         </div>
         
@@ -106,8 +201,7 @@ if (isset($_SESSION['user_id'])) {
         <div class="privacy-notice">
             <i class="fas fa-shield-alt" style="margin-left: 5px;"></i>
             باستخدامك للتطبيق، فإنك توافق على 
-            <a href="privacy.php">سياسة الخصوصية</a> 
-            <!-- <a href="terms.php">شروط الخدمة</a> -->
+            <a href="privacy.php">سياسة الخصوصية</a>
         </div>
     </div>
 
@@ -293,26 +387,115 @@ if (isset($_SESSION['user_id'])) {
     <script>
         // متغيرات عامة
         let currentForm = 'login';
-
+        let deviceInfo = {};
+        
+        // الحصول على معلومات الجهاز
+        function getDeviceInfo() {
+            const userAgent = navigator.userAgent;
+            let deviceType = 'web';
+            let os = 'Unknown';
+            let browser = 'Unknown';
+            
+            // تحديد نوع الجهاز
+            if (/android/i.test(userAgent)) {
+                deviceType = 'android';
+                os = 'Android';
+            } else if (/iphone|ipad|ipod/i.test(userAgent)) {
+                deviceType = 'ios';
+                os = 'iOS';
+            } else if (/windows|mac|linux/i.test(userAgent)) {
+                deviceType = 'desktop';
+                if (/windows/i.test(userAgent)) os = 'Windows';
+                else if (/mac/i.test(userAgent)) os = 'macOS';
+                else if (/linux/i.test(userAgent)) os = 'Linux';
+            }
+            
+            // تحديد المتصفح
+            if (/chrome|chromium/i.test(userAgent) && !/edg/i.test(userAgent)) {
+                browser = 'Chrome';
+            } else if (/firefox|fxios/i.test(userAgent)) {
+                browser = 'Firefox';
+            } else if (/safari/i.test(userAgent) && !/chrome/i.test(userAgent)) {
+                browser = 'Safari';
+            } else if (/edg/i.test(userAgent)) {
+                browser = 'Edge';
+            } else if (/opera|opr/i.test(userAgent)) {
+                browser = 'Opera';
+            }
+            
+            // الحصول على الشاشة
+            const screenSize = `${screen.width}x${screen.height}`;
+            
+            // الحصول على المنطقة الزمنية
+            const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+            
+            deviceInfo = {
+                device_type: deviceType,
+                os: os,
+                browser: browser,
+                screen_size: screenSize,
+                timezone: timezone,
+                language: navigator.language,
+                user_agent: userAgent
+            };
+            
+            // تحديث عرض معلومات الجهاز
+            updateDeviceInfoDisplay();
+        }
+        
+        // تحديث عرض معلومات الجهاز
+        function updateDeviceInfoDisplay() {
+            const deviceInfoDiv = document.getElementById('deviceInfo');
+            if (deviceInfoDiv) {
+                const icons = {
+                    'android': '<i class="fab fa-android"></i>',
+                    'ios': '<i class="fab fa-apple"></i>',
+                    'desktop': '<i class="fas fa-desktop"></i>',
+                    'web': '<i class="fas fa-globe"></i>'
+                };
+                const icon = icons[deviceInfo.device_type] || icons.web;
+                
+                deviceInfoDiv.innerHTML = `
+                    ${icon}
+                    <span>${deviceInfo.os} | ${deviceInfo.browser}</span>
+                    <span class="device-badge">
+                        <i class="fas fa-fingerprint"></i>
+                        تم التعرف على جهازك
+                    </span>
+                `;
+            }
+        }
+        
+        // التحقق من وجود جلسة سابقة
+        function checkPreviousSession() {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('session_expired') === '1') {
+                const sessionWarning = document.getElementById('sessionWarning');
+                sessionWarning.classList.add('show');
+                setTimeout(() => {
+                    sessionWarning.classList.remove('show');
+                }, 5000);
+            }
+        }
+        
         // دالة التعامل مع تسجيل الدخول بالجوجل
         function handleGoogleLogin(response) {
             showLoading();
+            
+            // إرسال معلومات الجهاز مع طلب تسجيل الدخول
+            const loginData = {
+                credential: response.credential,
+                device_info: deviceInfo
+            };
             
             fetch('includes/save_user.php', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({
-                    credential: response.credential
-                })
+                body: JSON.stringify(loginData)
             })
-            .then(res => {
-                if (!res.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return res.json();
-            })
+            .then(res => res.json())
             .then(data => {
                 if (data.success) {
                     showSuccessMessage();
@@ -323,7 +506,12 @@ if (isset($_SESSION['user_id'])) {
                     }, 1500);
                 } else {
                     hideLoading();
-                    showErrorMessage(data.message || 'حدث خطأ في التسجيل');
+                    if (data.devices_count) {
+                        // إذا كان هناك أجهزة متعددة، عرض خيار تسجيل الخروج
+                        showMultipleDevicesWarning(data.devices_count, data.message);
+                    } else {
+                        showErrorMessage(data.message || 'حدث خطأ في التسجيل');
+                    }
                 }
             })
             .catch(error => {
@@ -332,30 +520,100 @@ if (isset($_SESSION['user_id'])) {
                 showErrorMessage('حدث خطأ أثناء الاتصال بالخادم');
             });
         }
-
+        
+        // عرض تحذير الأجهزة المتعددة
+        function showMultipleDevicesWarning(devicesCount, message) {
+            const errorDiv = document.createElement('div');
+            errorDiv.style.cssText = `
+                position: fixed;
+                top: 20px;
+                left: 20px;
+                background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+                color: #92400e;
+                padding: 20px;
+                border-radius: var(--radius-md);
+                border-right: 4px solid #f59e0b;
+                z-index: 1000;
+                animation: slideIn 0.3s ease;
+                max-width: 400px;
+                box-shadow: var(--shadow-lg);
+            `;
+            errorDiv.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
+                    <i class="fas fa-exclamation-triangle" style="font-size: 24px;"></i>
+                    <div>
+                        <h4 style="margin: 0 0 5px 0; font-weight: 700;">تنبيه: أجهزة متعددة</h4>
+                        <p style="margin: 0;">${message || 'لديك ${devicesCount} أجهزة متصلة أخرى'}</p>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <button onclick="handleForceLogin()" style="flex: 1; padding: 8px; background: #f59e0b; color: white; border: none; border-radius: 8px; cursor: pointer;">
+                        تسجيل الدخول وتسجيل خروج الآخرين
+                    </button>
+                    <button onclick="this.parentElement.parentElement.remove()" style="flex: 1; padding: 8px; background: #e5e7eb; border: none; border-radius: 8px; cursor: pointer;">
+                        إلغاء
+                    </button>
+                </div>
+            `;
+            document.body.appendChild(errorDiv);
+            
+            // حفظ بيانات الاعتماد للمحاولة مرة أخرى
+            window.pendingGoogleCredential = window.pendingGoogleCredential || null;
+        }
+        
+        // معالجة تسجيل الدخول القسري (تسجيل خروج الأجهزة الأخرى)
+        function handleForceLogin() {
+            showLoading();
+            
+            fetch('includes/save_user.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    credential: window.pendingGoogleCredential,
+                    device_info: deviceInfo,
+                    force_login: true
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    showSuccessMessage();
+                    setTimeout(() => {
+                        window.location.href = 'index.php';
+                    }, 1500);
+                } else {
+                    hideLoading();
+                    showErrorMessage(data.message || 'حدث خطأ');
+                }
+            })
+            .catch(error => {
+                hideLoading();
+                showErrorMessage('حدث خطأ');
+            });
+        }
+        
         // فتح نافذة البريد
         function openEmailModal(formType = 'login') {
             document.getElementById('emailModal').style.display = 'flex';
             showForm(formType);
         }
-
+        
         // إغلاق نافذة البريد
         function closeEmailModal() {
             document.getElementById('emailModal').style.display = 'none';
             resetForms();
         }
-
+        
         // إظهار النموذج المطلوب
         function showForm(formType) {
-            // إخفاء جميع النماذج
             document.querySelectorAll('.form-section').forEach(form => {
                 form.classList.remove('active');
             });
             
-            // إظهار النموذج المطلوب
             document.getElementById(formType + 'Form').classList.add('active');
             
-            // تحديث العنوان
             const titles = {
                 'login': { title: 'تسجيل الدخول', subtitle: 'أدخل بياناتك للدخول إلى حسابك' },
                 'register': { title: 'إنشاء حساب جديد', subtitle: 'املأ البيانات التالية لإنشاء حساب' },
@@ -368,23 +626,11 @@ if (isset($_SESSION['user_id'])) {
             currentForm = formType;
             hideFormMessage();
         }
-
-        // إظهار نموذج التسجيل
-        function showRegisterForm() {
-            showForm('register');
-        }
-
-        // إظهار نموذج تسجيل الدخول
-        function showLoginForm() {
-            showForm('login');
-        }
-
-        // إظهار نموذج استعادة كلمة المرور
-        function showForgotPassword() {
-            showForm('forgotPassword');
-        }
-
-        // إعادة تعيين النماذج
+        
+        function showRegisterForm() { showForm('register'); }
+        function showLoginForm() { showForm('login'); }
+        function showForgotPassword() { showForm('forgotPassword'); }
+        
         function resetForms() {
             document.getElementById('loginFormElement').reset();
             document.getElementById('registerFormElement').reset();
@@ -392,11 +638,11 @@ if (isset($_SESSION['user_id'])) {
             hideFormMessage();
             showForm('login');
         }
-
-        // عرض/إخفاء كلمة المرور
+        
         function togglePassword(inputId) {
             const input = document.getElementById(inputId);
-            const icon = input.nextElementSibling.querySelector('i');
+            const button = input.nextElementSibling;
+            const icon = button.querySelector('i');
             
             if (input.type === 'password') {
                 input.type = 'text';
@@ -408,25 +654,22 @@ if (isset($_SESSION['user_id'])) {
                 icon.classList.add('fa-eye');
             }
         }
-
-        // عرض رسالة في النموذج
+        
         function showFormMessage(message, type = 'error') {
             const messageDiv = document.getElementById('formMessage');
             messageDiv.textContent = message;
             messageDiv.className = `form-message ${type}`;
             messageDiv.style.display = 'block';
             
-            // إخفاء الرسالة بعد 5 ثواني
             if (type === 'success') {
                 setTimeout(hideFormMessage, 5000);
             }
         }
-
-        // إخفاء رسالة النموذج
+        
         function hideFormMessage() {
             document.getElementById('formMessage').style.display = 'none';
         }
-
+        
         // معالجة تسجيل الدخول
         async function handleLogin(event) {
             event.preventDefault();
@@ -435,13 +678,11 @@ if (isset($_SESSION['user_id'])) {
             const password = document.getElementById('loginPassword').value;
             const rememberMe = document.getElementById('rememberMe').checked;
             
-            // التحقق من المدخلات
             if (!email || !password) {
                 showFormMessage('يرجى ملء جميع الحقول', 'error');
                 return;
             }
             
-            // تعطيل زر الإرسال
             const submitBtn = document.getElementById('loginSubmitBtn');
             submitBtn.disabled = true;
             submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري التحقق...';
@@ -456,7 +697,8 @@ if (isset($_SESSION['user_id'])) {
                         action: 'login',
                         email: email,
                         password: password,
-                        remember: rememberMe
+                        remember: rememberMe,
+                        device_info: deviceInfo
                     })
                 });
                 
@@ -464,15 +706,17 @@ if (isset($_SESSION['user_id'])) {
                 
                 if (data.success) {
                     showFormMessage('تم تسجيل الدخول بنجاح!', 'success');
-                    
-                    // إعادة التوجيه بعد نجاح التسجيل
                     setTimeout(() => {
                         const urlParams = new URLSearchParams(window.location.search);
                         const redirect = urlParams.get('redirect');
                         window.location.href = redirect || 'index.php';
                     }, 1500);
                 } else {
-                    showFormMessage(data.message || 'فشل تسجيل الدخول', 'error');
+                    if (data.devices_count) {
+                        showFormMessage(data.message + ' الرجاء محاولة تسجيل الدخول مرة أخرى.', 'error');
+                    } else {
+                        showFormMessage(data.message || 'فشل تسجيل الدخول', 'error');
+                    }
                     submitBtn.disabled = false;
                     submitBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> تسجيل الدخول';
                 }
@@ -483,7 +727,7 @@ if (isset($_SESSION['user_id'])) {
                 submitBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> تسجيل الدخول';
             }
         }
-
+        
         // معالجة إنشاء حساب
         async function handleRegister(event) {
             event.preventDefault();
@@ -493,7 +737,6 @@ if (isset($_SESSION['user_id'])) {
             const password = document.getElementById('registerPassword').value;
             const confirmPassword = document.getElementById('registerConfirmPassword').value;
             
-            // التحقق من المدخلات
             if (!name || !email || !password || !confirmPassword) {
                 showFormMessage('يرجى ملء جميع الحقول', 'error');
                 return;
@@ -509,7 +752,6 @@ if (isset($_SESSION['user_id'])) {
                 return;
             }
             
-            // تعطيل زر الإرسال
             const submitBtn = document.getElementById('registerSubmitBtn');
             submitBtn.disabled = true;
             submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري إنشاء الحساب...';
@@ -524,7 +766,8 @@ if (isset($_SESSION['user_id'])) {
                         action: 'register',
                         name: name,
                         email: email,
-                        password: password
+                        password: password,
+                        device_info: deviceInfo
                     })
                 });
                 
@@ -532,8 +775,6 @@ if (isset($_SESSION['user_id'])) {
                 
                 if (data.success) {
                     showFormMessage('تم إنشاء الحساب بنجاح! يمكنك تسجيل الدخول الآن.', 'success');
-                    
-                    // إظهار نموذج تسجيل الدخول بعد النجاح
                     setTimeout(() => {
                         showLoginForm();
                         document.getElementById('loginEmail').value = email;
@@ -553,7 +794,7 @@ if (isset($_SESSION['user_id'])) {
                 submitBtn.innerHTML = '<i class="fas fa-user-plus"></i> إنشاء حساب جديد';
             }
         }
-
+        
         // معالجة استعادة كلمة المرور
         async function handleForgotPassword(event) {
             event.preventDefault();
@@ -565,7 +806,6 @@ if (isset($_SESSION['user_id'])) {
                 return;
             }
             
-            // تعطيل زر الإرسال
             const submitBtn = document.getElementById('forgotSubmitBtn');
             submitBtn.disabled = true;
             submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري الإرسال...';
@@ -588,8 +828,6 @@ if (isset($_SESSION['user_id'])) {
                     showFormMessage(data.message || 'تم إرسال رابط الاستعادة إلى بريدك الإلكتروني', 'success');
                     submitBtn.disabled = false;
                     submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> إرسال رابط الاستعادة';
-                    
-                    // العودة لتسجيل الدخول بعد 3 ثواني
                     setTimeout(showLoginForm, 3000);
                 } else {
                     showFormMessage(data.message || 'حدث خطأ أثناء إرسال رابط الاستعادة', 'error');
@@ -603,31 +841,29 @@ if (isset($_SESSION['user_id'])) {
                 submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> إرسال رابط الاستعادة';
             }
         }
-
+        
         // إغلاق النافذة بالضغط على ESC
         document.addEventListener('keydown', function(event) {
             if (event.key === 'Escape') {
                 closeEmailModal();
             }
         });
-
+        
         // إغلاق النافذة بالضغط خارجها
         document.getElementById('emailModal').addEventListener('click', function(event) {
             if (event.target === this) {
                 closeEmailModal();
             }
         });
-
-        // دالة عرض حالة التحميل
+        
         function showLoading() {
             document.getElementById('loading').style.display = 'block';
         }
-
+        
         function hideLoading() {
             document.getElementById('loading').style.display = 'none';
         }
-
-        // دالة لعرض رسالة النجاح
+        
         function showSuccessMessage() {
             const loadingDiv = document.getElementById('loading');
             loadingDiv.innerHTML = `
@@ -637,8 +873,7 @@ if (isset($_SESSION['user_id'])) {
                 </div>
             `;
         }
-
-        // دالة لعرض رسالة الخطأ
+        
         function showErrorMessage(message) {
             const errorDiv = document.createElement('div');
             errorDiv.style.cssText = `
@@ -646,14 +881,14 @@ if (isset($_SESSION['user_id'])) {
                 top: 20px;
                 left: 20px;
                 background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
-                color: var(--danger-color);
+                color: #dc2626;
                 padding: 20px;
-                border-radius: var(--radius-md);
-                border-right: 4px solid var(--danger-color);
+                border-radius: 12px;
+                border-right: 4px solid #dc2626;
                 z-index: 1000;
                 animation: slideIn 0.3s ease;
                 max-width: 400px;
-                box-shadow: var(--shadow-lg);
+                box-shadow: 0 10px 25px rgba(0,0,0,0.1);
                 display: flex;
                 align-items: center;
                 gap: 15px;
@@ -661,7 +896,7 @@ if (isset($_SESSION['user_id'])) {
             errorDiv.innerHTML = `
                 <i class="fas fa-exclamation-triangle" style="font-size: 24px;"></i>
                 <div>
-                    <h4 style="margin: 0 0 5px 0; font-weight: 700;">خطأ في التسجيل</h4>
+                    <h4 style="margin: 0 0 5px 0; font-weight: 700;">خطأ</h4>
                     <p style="margin: 0;">${message}</p>
                 </div>
             `;
@@ -670,12 +905,12 @@ if (isset($_SESSION['user_id'])) {
             setTimeout(() => {
                 errorDiv.style.animation = 'slideOut 0.3s ease';
                 setTimeout(() => {
-                    document.body.removeChild(errorDiv);
+                    if (errorDiv.parentElement) errorDiv.remove();
                 }, 300);
             }, 5000);
         }
-
-        // إضافة أنيميشن للرسائل
+        
+        // إضافة الأنيميشن
         const style = document.createElement('style');
         style.textContent = `
             @keyframes slideIn {
@@ -689,6 +924,12 @@ if (isset($_SESSION['user_id'])) {
             }
         `;
         document.head.appendChild(style);
+        
+        // تهيئة الصفحة
+        document.addEventListener('DOMContentLoaded', function() {
+            getDeviceInfo();
+            checkPreviousSession();
+        });
     </script>
 </body>
 </html>

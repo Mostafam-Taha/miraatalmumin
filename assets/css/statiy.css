@@ -449,3 +449,618 @@
     }
 }
 
+/* ============ قسم المداومة ============ */
+.streak-section {
+    background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+    max-width: 1200px;
+    border-radius: 15px;
+    padding: 10px;
+    margin: 10px auto;
+    color: white;
+    box-shadow: 0 5px 15px rgba(16, 185, 129, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.streak-section::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.1) 1%, transparent 20%);
+    opacity: 0.5;
+}
+
+.streak-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.streak-title {
+    font-size: 18px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.streak-icon {
+    background: rgba(255, 255, 255, 0.2);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+}
+
+.streak-stats {
+    display: flex;
+    justify-content: space-between;
+    text-align: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.streak-item {
+    flex: 1;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 15px 5px;
+}
+
+.streak-number {
+    font-size: 28px;
+    font-weight: 800;
+    line-height: 1;
+    margin-bottom: 5px;
+}
+
+.streak-label {
+    font-size: 13px;
+    opacity: 0.9;
+}
+
+.streak-progress {
+    margin: 20px 0;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    height: 8px;
+    overflow: hidden;
+    position: relative;
+}
+
+.streak-progress-bar {
+    height: 100%;
+    background: white;
+    border-radius: 10px;
+    transition: width 0.5s ease;
+}
+
+.progress-text {
+    position: absolute;
+    top: -25px;
+    right: 0;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.today-status {
+    margin-top: 20px;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+}
+
+.prayed-count-badge {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.prayed-count {
+    font-weight: 700;
+    color: #10B981;
+    background: white;
+    min-width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+}
+
+#streak-message {
+    flex: 1;
+    font-size: 14px;
+}
+
+.prayer-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.prayer-item {
+    padding: 6px 12px;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 8px;
+    font-size: 12px;
+    flex: 1;
+    min-width: 60px;
+    text-align: center;
+}
+
+.prayer-item.prayed {
+    background: rgba(255, 255, 255, 0.3);
+    font-weight: 600;
+}
+
+.prayer-item.remaining {
+    opacity: 0.7;
+}
+
+.streak-history {
+    margin-top: 15px;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+}
+
+.history-title {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+}
+
+.history-content {
+    font-size: 12px;
+    line-height: 1.6;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+}
+
+.history-content.show {
+    max-height: 300px;
+}
+
+.history-item {
+    margin-bottom: 8px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.history-item:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+}
+
+.toggle-history {
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+/* ============ قسم التقرير الأسبوعي ============ */
+.weekly-report-section {
+    background: white;
+    padding: 10px;
+    margin: 15px auto;
+    max-width: 1200px;
+}
+
+.report-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #F3F4F6;
+}
+
+.report-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #111827;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.report-title i {
+    color: #059669;
+    font-size: 22px;
+}
+
+.report-period {
+    font-size: 14px;
+    color: #6B7280;
+    background: #F9FAFB;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-weight: 500;
+}
+
+.report-switcher {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 30px;
+    background: #F9FAFB;
+    padding: 4px;
+    border-radius: 10px;
+}
+
+.report-tab {
+    flex: 1;
+    text-align: center;
+    padding: 10px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: #6B7280;
+    font-size: 14px;
+}
+
+.report-tab.active {
+    background: #059669;
+    color: white;
+}
+
+.report-tab:hover:not(.active) {
+    background: #E5E7EB;
+}
+
+.report-content {
+    display: none;
+}
+
+.report-content.active {
+    display: block;
+}
+
+.weekly-bars {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 25px;
+}
+
+.day-bar {
+    flex: 1;
+    text-align: center;
+}
+
+.bar-container {
+    height: 120px;
+    position: relative;
+    margin-bottom: 8px;
+}
+
+.bar {
+    width: 25px;
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 6px 6px 0 0;
+    transition: height 0.5s ease;
+}
+
+.bar-label {
+    position: absolute;
+    bottom: -25px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 12px;
+    font-weight: 600;
+    color: #111827;
+    white-space: nowrap;
+}
+
+.bar-value {
+    position: absolute;
+    top: -25px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 12px;
+    font-weight: 700;
+    color: #111827;
+    background: white;
+    padding: 2px 6px;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.day-info {
+    margin-top: 35px;
+    text-align: center;
+    font-size: 12px;
+    color: #6B7280;
+}
+
+.day-info span {
+    display: block;
+    margin-top: 5px;
+    font-weight: 600;
+    color: #047857;
+}
+
+.report-summary {
+    background: linear-gradient(135deg, #F9FAFB 0%, #F3F4F6 100%);
+    border-radius: 12px;
+    padding: 20px;
+    margin-top: 25px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 15px;
+}
+
+.summary-item {
+    text-align: center;
+    padding: 15px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+
+.summary-value {
+    font-size: 24px;
+    font-weight: 800;
+    color: #059669;
+    margin-bottom: 5px;
+}
+
+.summary-value.nawafil {
+    color: #047857;
+}
+
+.summary-value.percentage {
+    color: #111827;
+}
+
+.summary-label {
+    font-size: 13px;
+    color: #6B7280;
+    font-weight: 500;
+}
+
+.monthly-report-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.monthly-stat {
+    background: white;
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+    border: 1px solid #E5E7EB;
+}
+
+.monthly-value {
+    font-size: 28px;
+    font-weight: 800;
+    color: #111827;
+    margin-bottom: 5px;
+}
+
+.monthly-label {
+    font-size: 14px;
+    color: #6B7280;
+    margin-bottom: 10px;
+}
+
+.monthly-progress {
+    height: 8px;
+    background: #E5E7EB;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-top: 15px;
+}
+
+.monthly-progress-bar {
+    height: 100%;
+    border-radius: 4px;
+    background: linear-gradient(to right, #10B981, #047857);
+    transition: width 0.5s ease;
+}
+
+.monthly-details {
+    background: #F9FAFB;
+    border-radius: 10px;
+    padding: 15px;
+    margin-top: 20px;
+}
+
+.details-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 10px;
+}
+
+.detail-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    background: white;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+.detail-label {
+    color: #6B7280;
+}
+
+.detail-value {
+    font-weight: 600;
+    color: #111827;
+}
+
+/* ============ استعلامات الوسائط ============ */
+@media (max-width: 768px) {
+    .streak-section {
+        margin: 10px;
+        padding: 8px;
+    }
+    
+    .streak-stats {
+        flex-direction: column;
+    }
+    
+    .streak-item {
+        padding: 12px;
+    }
+    
+    .streak-number {
+        font-size: 24px;
+    }
+    
+    .card-stat {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+    
+    .card-item {
+        padding: 15px;
+    }
+    
+    #combined-heatmap {
+        min-width: 500px;
+    }
+    
+    .weekly-bars {
+        overflow-x: auto;
+        padding-bottom: 10px;
+    }
+    
+    .day-bar {
+        min-width: 60px;
+    }
+    
+    .report-summary {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .monthly-report-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .header-title h2 {
+        font-size: 18px;
+    }
+    
+    .switch-item .item-link {
+        font-size: 12px;
+        padding: 8px 5px;
+    }
+    
+    .streak-title {
+        font-size: 16px;
+    }
+    
+    .streak-icon {
+        width: 35px;
+        height: 35px;
+    }
+    
+    .period-btn {
+        font-size: 12px;
+        padding: 8px 4px;
+    }
+    
+    .card-stat {
+        grid-template-columns: 1fr;
+    }
+    
+    .dis-card i {
+        font-size: 20px;
+    }
+    
+    .dis-card span {
+        font-size: 20px;
+    }
+    
+    .prayer-item {
+        font-size: 11px;
+        padding: 5px 8px;
+    }
+    
+    #combined-heatmap {
+        min-width: 400px;
+    }
+    
+    .report-header {
+        flex-direction: column;
+        gap: 10px;
+        text-align: center;
+    }
+    
+    .report-summary {
+        grid-template-columns: 1fr;
+    }
+    
+    .weekly-bars {
+        gap: 5px;
+    }
+    
+    .day-bar {
+        min-width: 50px;
+    }
+    
+    .bar {
+        width: 20px;
+    }
+}
+
+@media (max-width: 360px) {
+    .streak-number {
+        font-size: 22px;
+    }
+    
+    .prayer-item {
+        min-width: 55px;
+    }
+    
+    #combined-heatmap {
+        min-width: 350px;
+    }
+    
+    .day-bar {
+        min-width: 45px;
+    }
+    
+    .bar {
+        width: 18px;
+    }
+}
+
+/* ============ تحسينات إضافية ============ */
+button:active {
+    transform: scale(0.95);
+}
+
+.no-data p {
+    margin: 10px 0;
+    font-size: 16px;
+}

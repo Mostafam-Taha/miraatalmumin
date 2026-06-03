@@ -74,6 +74,25 @@ if (!$group && $join_code) {
     <title>معاينة المجموعة - <?php echo htmlspecialchars($group['group_name'] ?? 'مجموعة'); ?></title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200..1000&family=Tajawal:wght@200;300;400;500;700;800;900&display=swap" rel="stylesheet">
+    
+    
+    <!-- Google tag (gtag.js) -->
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-RSG9M1LGJD"></script>
+
+<script>
+
+  window.dataLayer = window.dataLayer || [];
+
+  function gtag(){dataLayer.push(arguments);}
+
+  gtag('js', new Date());
+
+  gtag('config', 'G-RSG9M1LGJD');
+
+</script>
+    
+    
     <style>
         * {
             margin: 0;

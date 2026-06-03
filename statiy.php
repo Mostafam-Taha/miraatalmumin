@@ -1,513 +1,10 @@
 <?php
-session_start();
-require_once 'includes/config.php';
-
-// التحقق إذا كان المستخدم مسجل الدخول
-if (!isset($_SESSION['user_id'])) {
-    header('Location: login.php');
-    exit();
-}
-
-if (isset($_SESSION['user_id']) && !isset($_SESSION['username'])) {
-    $stmt = $pdo->prepare("SELECT name FROM users WHERE id = ?");
-    $stmt->execute([$_SESSION['user_id']]);
-    $user = $stmt->fetch();
-    
-    if ($user) {
-        $_SESSION['username'] = $user['name'];
-    }
-}
-
-// ============ دالة لحساب المداومة من السجلات التاريخية ============
-function calculatePrayerStreakFromRecords($user_id, $pdo) {
-    try {
-        // جلب جميع سجلات الصلوات للمستخدم مرتبة حسب التاريخ
-        $stmt = $pdo->prepare("
-            SELECT DISTINCT DATE(date) as prayer_date
-            FROM prayer_records 
-            WHERE user_id = ? 
-            AND status IN ('prayed_in_mosque', 'prayed_alone', 'delayed')
-            ORDER BY prayer_date ASC
-        ");
-        $stmt->execute([$user_id]);
-        $dates = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        
-        if (empty($dates)) {
-            return [
-                'current_streak' => 0,
-                'max_streak' => 0,
-                'all_prayed_dates' => [],
-                'streak_history' => []
-            ];
-        }
-        
-        // تحويل التواريخ إلى صيغة Y-m-d
-        $all_dates = array_column($dates, 'prayer_date');
-        
-        // جلب أيام قام فيها بصلاة جميع الصلوات الخمس
-        $stmt = $pdo->prepare("
-            SELECT DATE(date) as prayer_date, 
-                   COUNT(DISTINCT prayer_name) as prayer_count
-            FROM prayer_records 
-            WHERE user_id = ? 
-            AND status IN ('prayed_in_mosque', 'prayed_alone', 'delayed')
-            GROUP BY DATE(date)
-            HAVING prayer_count = 5
-            ORDER BY prayer_date ASC
-        ");
-        $stmt->execute([$user_id]);
-        $complete_days = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        
-        if (empty($complete_days)) {
-            return [
-                'current_streak' => 0,
-                'max_streak' => 0,
-                'all_prayed_dates' => $all_dates,
-                'streak_history' => []
-            ];
-        }
-        
-        // تحويل أيام الصلاة الكاملة إلى مصفوفة
-        $complete_dates = [];
-        foreach ($complete_days as $day) {
-            $complete_dates[] = $day['prayer_date'];
-        }
-        
-        // حساب المداومة الحالية والأعلى
-        $current_streak = 0;
-        $max_streak = 0;
-        $streak_history = [];
-        
-        // فرز التواريخ تصاعدياً
-        sort($complete_dates);
-        
-        $temp_streak = 1;
-        $last_date = null;
-        
-        foreach ($complete_dates as $date) {
-            $current_date = new DateTime($date);
-            
-            if ($last_date === null) {
-                $temp_streak = 1;
-            } else {
-                $diff = $last_date->diff($current_date);
-                
-                // إذا كان الفرق يوم واحد فقط (متتالي)
-                if ($diff->days == 1) {
-                    $temp_streak++;
-                } 
-                // إذا كان هناك فجوة أكثر من يوم
-                else {
-                    // حفظ المداومة السابقة
-                    $streak_history[] = [
-                        'start' => date('Y-m-d', strtotime($date . " -" . ($temp_streak - 1) . " days")),
-                        'end' => $last_date->format('Y-m-d'),
-                        'length' => $temp_streak
-                    ];
-                    
-                    $temp_streak = 1;
-                }
-            }
-            
-            // تحديث أعلى مداومة
-            if ($temp_streak > $max_streak) {
-                $max_streak = $temp_streak;
-            }
-            
-            $last_date = $current_date;
-        }
-        
-        // حفظ آخر مداومة
-        if ($temp_streak > 0 && $last_date !== null) {
-            $streak_history[] = [
-                'start' => date('Y-m-d', strtotime($last_date->format('Y-m-d') . " -" . ($temp_streak - 1) . " days")),
-                'end' => $last_date->format('Y-m-d'),
-                'length' => $temp_streak
-            ];
-            
-            // المداومة الحالية هي آخر مداومة إذا كانت حتى اليوم أو البارحة
-            $today = new DateTime();
-            $yesterday = clone $today;
-            $yesterday->modify('-1 day');
-            
-            $last_date_str = $last_date->format('Y-m-d');
-            $today_str = $today->format('Y-m-d');
-            $yesterday_str = $yesterday->format('Y-m-d');
-            
-            if ($last_date_str === $today_str || $last_date_str === $yesterday_str) {
-                $current_streak = $temp_streak;
-            } else {
-                $current_streak = 0;
-            }
-        }
-        
-        // الحصول على بيانات المستخدم الحالية
-        $stmt = $pdo->prepare("SELECT current_prayer_streak, max_prayer_streak FROM users WHERE id = ?");
-        $stmt->execute([$user_id]);
-        $user_data = $stmt->fetch(PDO::FETCH_ASSOC);
-        
-        $db_current_streak = $user_data['current_prayer_streak'] ?? 0;
-        $db_max_streak = $user_data['max_prayer_streak'] ?? 0;
-        
-        // تحديث أعلى مداومة في قاعدة البيانات إذا كانت الحسابات أعلى
-        if ($max_streak > $db_max_streak) {
-            $stmt = $pdo->prepare("UPDATE users SET max_prayer_streak = ? WHERE id = ?");
-            $stmt->execute([$max_streak, $user_id]);
-        }
-        
-        // تحديث المداومة الحالية في قاعدة البيانات
-        if ($current_streak != $db_current_streak) {
-            $stmt = $pdo->prepare("UPDATE users SET current_prayer_streak = ? WHERE id = ?");
-            $stmt->execute([$current_streak, $user_id]);
-        }
-        
-        return [
-            'current_streak' => $current_streak,
-            'max_streak' => $max_streak,
-            'all_prayed_dates' => $all_dates,
-            'streak_history' => $streak_history,
-            'complete_dates' => $complete_dates
-        ];
-        
-    } catch (PDOException $e) {
-        error_log("Error calculating prayer streak from records: " . $e->getMessage());
-        return [
-            'current_streak' => 0,
-            'max_streak' => 0,
-            'all_prayed_dates' => [],
-            'streak_history' => []
-        ];
-    }
-}
-
-// ============ دالة لحساب صلاة اليوم ============
-function getTodayPrayerStatus($user_id, $pdo) {
-    try {
-        $today = date('Y-m-d');
-        
-        // حساب الصلوات المؤداة اليوم
-        $stmt = $pdo->prepare("
-            SELECT COUNT(DISTINCT prayer_name) as prayed_count,
-                   GROUP_CONCAT(DISTINCT prayer_name) as prayed_names
-            FROM prayer_records 
-            WHERE user_id = ? 
-            AND date = ? 
-            AND status IN ('prayed_in_mosque', 'prayed_alone', 'delayed')
-        ");
-        $stmt->execute([$user_id, $today]);
-        $result = $stmt->fetch(PDO::FETCH_ASSOC);
-        
-        $prayed_today = $result['prayed_count'] ?? 0;
-        $prayed_names = $result['prayed_names'] ?? '';
-        
-        // حساب الصلوات المتبقية
-        $all_prayers = ['الفجر', 'الظهر', 'العصر', 'المغرب', 'العشاء'];
-        $prayed_array = $prayed_names ? explode(',', $prayed_names) : [];
-        $remaining_prayers = array_diff($all_prayers, $prayed_array);
-        
-        // التحقق إذا صلى جميع الصلوات اليوم
-        $all_prayed_today = ($prayed_today >= 5) ? true : false;
-        
-        return [
-            'prayed_count' => $prayed_today,
-            'prayed_names' => $prayed_array,
-            'remaining_prayers' => array_values($remaining_prayers),
-            'all_prayed' => $all_prayed_today,
-            'progress_percentage' => min(100, ($prayed_today / 5) * 100)
-        ];
-        
-    } catch (PDOException $e) {
-        error_log("Error getting today prayer status: " . $e->getMessage());
-        return [
-            'prayed_count' => 0,
-            'prayed_names' => [],
-            'remaining_prayers' => ['الفجر', 'الظهر', 'العصر', 'المغرب', 'العشاء'],
-            'all_prayed' => false,
-            'progress_percentage' => 0
-        ];
-    }
-}
-
-// ============ حساب المداومة من السجلات التاريخية ============
-$user_id = $_SESSION['user_id'];
-$streak_data = calculatePrayerStreakFromRecords($user_id, $pdo);
-$today_status = getTodayPrayerStatus($user_id, $pdo);
-
-// ============ الحصول على المداومة الحالية والأعلى ============
-$current_streak = $streak_data['current_streak'];
-$max_streak = $streak_data['max_streak'];
-$prayed_today = $today_status['prayed_count'];
-$all_prayed_today = $today_status['all_prayed'];
-$progress_percentage = $today_status['progress_percentage'];
-
-// إحصائيات إضافية للمداومة
-$total_prayer_days = count($streak_data['all_prayed_dates']);
-$total_complete_days = count($streak_data['complete_dates']);
-$longest_streak = $max_streak;
-
-// ============ بقية الكود ============
-// تحديد الشهر والسنة من الـ URL أو استخدام القيم الحالية
-$selected_year = isset($_GET['year']) ? intval($_GET['year']) : date('Y');
-$selected_month = isset($_GET['month']) ? intval($_GET['month']) : date('n');
-
-// أسماء الصلوات بالترتيب
-$prayers_list = ['الفجر', 'الظهر', 'العصر', 'المغرب', 'العشاء'];
-
-// استعلام لجلب جميع سجلات الصلوات للشهر المحدد
-$stmt = $pdo->prepare("
-    SELECT 
-        prayer_name,
-        DATE(date) as prayer_date,
-        status,
-        COUNT(*) as count
-    FROM prayer_records 
-    WHERE user_id = ? 
-        AND YEAR(date) = ? 
-        AND MONTH(date) = ?
-    GROUP BY prayer_name, DATE(date), status
-    ORDER BY 
-        CASE prayer_name 
-            WHEN 'الفجر' THEN 1
-            WHEN 'الظهر' THEN 2
-            WHEN 'العصر' THEN 3
-            WHEN 'المغرب' THEN 4
-            WHEN 'العشاء' THEN 5
-            ELSE 6
-        END,
-        prayer_date
-");
-$stmt->execute([$_SESSION['user_id'], $selected_year, $selected_month]);
-$records = $stmt->fetchAll();
-
-// تهيئة مصفوفة البيانات للـ Heatmap
-$heatmap_data = [];
-$daily_summary = [];
-
-// تحضير البيانات بشكل مناسب للـ Heatmap
-foreach ($records as $record) {
-    $prayer = $record['prayer_name'];
-    $date = $record['prayer_date'];
-    $status = $record['status'];
-    
-    // تخصيص ألوان وقيم لكل حالة
-    switch($status) {
-        case 'prayed_in_mosque':
-            $color = '#10B981'; // أخضر داكن
-            $value = 4; // أعلى قيمة
-            break;
-        case 'prayed_alone':
-            $color = '#3B82F6'; // أزرق
-            $value = 3;
-            break;
-        case 'delayed':
-            $color = '#F59E0B'; // برتقالي
-            $value = 2;
-            break;
-        case 'not_prayed':
-            $color = '#EF4444'; // أحمر
-            $value = 1;
-            break;
-        default:
-            $color = '#E5E7EB'; // رمادي (لا توجد بيانات)
-            $value = 0;
-            break;
-    }
-    
-    // تخزين بيانات الـ Heatmap
-    if (!isset($heatmap_data[$prayer])) {
-        $heatmap_data[$prayer] = [];
-    }
-    
-    $heatmap_data[$prayer][$date] = [
-        'x' => $date,
-        'y' => $value,
-        'status' => $status,
-        'color' => $color
-    ];
-}
-
-// حساب إحصائيات عامة
-$month_stats = [
-    'total_prayers' => 0,
-    'prayed_in_mosque' => 0,
-    'prayed_alone' => 0,
-    'delayed' => 0,
-    'not_prayed' => 0,
-    'no_data' => 0
-];
-
-// إحصائيات لكل صلاة
-$prayer_stats = [];
-foreach ($prayers_list as $prayer) {
-    $prayer_stats[$prayer] = [
-        'total' => 0,
-        'prayed_in_mosque' => 0,
-        'prayed_alone' => 0,
-        'delayed' => 0,
-        'not_prayed' => 0,
-        'no_data' => 0
-    ];
-}
-
-// حساب أيام الشهر
-$days_in_month = cal_days_in_month(CAL_GREGORIAN, $selected_month, $selected_year);
-$total_days = $days_in_month;
-
-// حساب الإحصائيات
-foreach ($prayers_list as $prayer) {
-    $month_stats['total_prayers'] += $total_days; // كل صلاة × أيام الشهر
-    
-    // حساب لكل صلاة
-    $prayer_data = isset($heatmap_data[$prayer]) ? $heatmap_data[$prayer] : [];
-    
-    // حساب الحالات لكل صلاة
-    for ($day = 1; $day <= $total_days; $day++) {
-        $date = sprintf('%04d-%02d-%02d', $selected_year, $selected_month, $day);
-        
-        if (isset($prayer_data[$date])) {
-            $status = $prayer_data[$date]['status'];
-            $prayer_stats[$prayer][$status]++;
-            $month_stats[$status]++;
-        } else {
-            $prayer_stats[$prayer]['no_data']++;
-            $month_stats['no_data']++;
-        }
-    }
-}
-
-// حساب النسب المئوية
-if ($month_stats['total_prayers'] > 0) {
-    $total_prayed = $month_stats['prayed_in_mosque'] + $month_stats['prayed_alone'] + $month_stats['delayed'];
-    $month_stats['percentage_prayed'] = round(($total_prayed / $month_stats['total_prayers']) * 100, 1);
-    $month_stats['percentage_mosque'] = round(($month_stats['prayed_in_mosque'] / $month_stats['total_prayers']) * 100, 1);
-} else {
-    $month_stats['percentage_prayed'] = 0;
-    $month_stats['percentage_mosque'] = 0;
-}
-
-// تحضير البيانات للـ Heatmap
-$heatmap_series = [];
-foreach ($prayers_list as $prayer) {
-    $prayer_data = isset($heatmap_data[$prayer]) ? $heatmap_data[$prayer] : [];
-    
-    $series_data = [];
-    for ($day = 1; $day <= $total_days; $day++) {
-        $date = sprintf('%04d-%02d-%02d', $selected_year, $selected_month, $day);
-        
-        if (isset($prayer_data[$date])) {
-            $series_data[] = $prayer_data[$date];
-        } else {
-            $series_data[] = [
-                'x' => $date,
-                'y' => 0,
-                'status' => 'no_data',
-                'color' => '#E5E7EB'
-            ];
-        }
-    }
-    
-    $heatmap_series[] = [
-        'name' => $prayer,
-        'data' => $series_data
-    ];
-}
-
-// ============ بيانات الرسم البياني للصلوات ============
-// استعلام للحصول على إحصائيات الصلوات للشهر الحالي
-$stmt = $pdo->prepare("
-    SELECT 
-        prayer_name,
-        SUM(CASE WHEN status = 'prayed_in_mosque' THEN 1 ELSE 0 END) as mosque_count,
-        SUM(CASE WHEN status = 'prayed_alone' THEN 1 ELSE 0 END) as alone_count,
-        SUM(CASE WHEN status = 'delayed' THEN 1 ELSE 0 END) as delayed_count,
-        SUM(CASE WHEN status = 'not_prayed' THEN 1 ELSE 0 END) as not_prayed_count,
-        COUNT(*) as total_count
-    FROM prayer_records 
-    WHERE user_id = ? 
-        AND YEAR(date) = ? 
-        AND MONTH(date) = ?
-    GROUP BY prayer_name
-    ORDER BY 
-        CASE prayer_name 
-            WHEN 'الفجر' THEN 1
-            WHEN 'الظهر' THEN 2
-            WHEN 'العصر' THEN 3
-            WHEN 'المغرب' THEN 4
-            WHEN 'العشاء' THEN 5
-            ELSE 6
-        END
-");
-$stmt->execute([$_SESSION['user_id'], date('Y'), date('n')]);
-$prayer_chart_data = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-// تهيئة بيانات للرسم البياني
-$prayer_names = [];
-$mosque_percentages = [];
-$alone_percentages = [];
-$delayed_percentages = [];
-$not_prayed_percentages = [];
-
-foreach ($prayer_chart_data as $prayer) {
-    $prayer_names[] = $prayer['prayer_name'];
-    
-    if ($prayer['total_count'] > 0) {
-        $days_in_month = date('t');
-        $total_possible = min($prayer['total_count'], $days_in_month);
-        
-        $mosque_percentages[] = round(($prayer['mosque_count'] / $days_in_month) * 100, 1);
-        $alone_percentages[] = round(($prayer['alone_count'] / $days_in_month) * 100, 1);
-        $delayed_percentages[] = round(($prayer['delayed_count'] / $days_in_month) * 100, 1);
-        $not_prayed_percentages[] = round(($prayer['not_prayed_count'] / $days_in_month) * 100, 1);
-    } else {
-        $mosque_percentages[] = 0;
-        $alone_percentages[] = 0;
-        $delayed_percentages[] = 0;
-        $not_prayed_percentages[] = 0;
-    }
-}
-
-// إذا لم تكن هناك بيانات، أنشئ بيانات افتراضية
-if (empty($prayer_chart_data)) {
-    $prayer_names = ['الفجر', 'الظهر', 'العصر', 'المغرب', 'العشاء'];
-    $mosque_percentages = array_fill(0, 5, 0);
-    $alone_percentages = array_fill(0, 5, 0);
-    $delayed_percentages = array_fill(0, 5, 0);
-    $not_prayed_percentages = array_fill(0, 5, 0);
-}
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-// التحقق من Pro
-$pro_enabled = false;
-$pro_column_exists = false;
-
-// أولاً: التحقق من وجود عمود Pro في جدول users
-try {
-    $stmt = $pdo->query("SHOW COLUMNS FROM `users` LIKE 'Pro'");
-    $pro_column_exists = $stmt->rowCount() > 0;
-    
-    if ($pro_column_exists) {
-        // جلب قيمة Pro للمستخدم
-        $stmt = $pdo->prepare("SELECT Pro FROM users WHERE id = ?");
-        $stmt->execute([$_SESSION['user_id']]);
-        $pro_result = $stmt->fetch(PDO::FETCH_ASSOC);
-        $pro_enabled = $pro_result && $pro_result['Pro'] == 1;
-    }
-} catch (PDOException $e) {
-    error_log("Error checking Pro column: " . $e->getMessage());
-}
+require_once 'api/statistics_data.php';
 ?>
 
 <!DOCTYPE html>
@@ -519,330 +16,33 @@ try {
     <link rel="stylesheet" href="assets/css/styles.css">
     <link rel="stylesheet" href="assets/css/statiy.css">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200..1000&family=Tajawal:wght@200;300;400;500;700;800;900&display=swap" rel="stylesheet">
-    
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
     <!-- Font Awesome CDN -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    
     <!-- ApexCharts CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/apexcharts@3.35.0/dist/apexcharts.css">
-    
     <title>الإحصائيات</title>
     
-    <style>
-        
-        /* ============ قسم المداومة ============ */
-        .streak-section {
-            background: linear-gradient(135deg, #10B981 0%, #059669 100%);
-            max-width: 1200px;
-            border-radius: 15px;
-            padding: 10px;
-            margin: 10px auto;
-            color: white;
-            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.3);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .streak-section::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            right: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.1) 1%, transparent 20%);
-            opacity: 0.5;
-        }
-        
-        .streak-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        
-        .streak-title {
-            font-size: 18px;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .streak-icon {
-            background: rgba(255, 255, 255, 0.2);
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-        }
-        
-        .streak-stats {
-            display: flex;
-            justify-content: space-between;
-            text-align: center;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-        
-        .streak-item {
-            flex: 1;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            padding: 15px 5px;
-        }
-        
-        .streak-number {
-            font-size: 28px;
-            font-weight: 800;
-            line-height: 1;
-            margin-bottom: 5px;
-        }
-        
-        .streak-label {
-            font-size: 13px;
-            opacity: 0.9;
-        }
-        
-        .streak-progress {
-            margin: 20px 0;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 10px;
-            height: 8px;
-            overflow: hidden;
-            position: relative;
-        }
-        
-        .streak-progress-bar {
-            height: 100%;
-            background: white;
-            border-radius: 10px;
-            transition: width 0.5s ease;
-        }
-        
-        .progress-text {
-            position: absolute;
-            top: -25px;
-            right: 0;
-            font-size: 12px;
-            font-weight: 600;
-        }
-        
-        .today-status {
-            margin-top: 20px;
-            padding: 15px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-        }
-        
-        .prayed-count-badge {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-        
-        .prayed-count {
-            font-weight: 700;
-            color: #10B981;
-            background: white;
-            min-width: 35px;
-            height: 35px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 14px;
-        }
-        
-        #streak-message {
-            flex: 1;
-            font-size: 14px;
-        }
-        
-        .prayer-list {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-        }
-        
-        .prayer-item {
-            padding: 6px 12px;
-            background: rgba(255, 255, 255, 0.15);
-            border-radius: 8px;
-            font-size: 12px;
-            flex: 1;
-            min-width: 60px;
-            text-align: center;
-        }
-        
-        .prayer-item.prayed {
-            background: rgba(255, 255, 255, 0.3);
-            font-weight: 600;
-        }
-        
-        .prayer-item.remaining {
-            opacity: 0.7;
-        }
-        
-        .streak-history {
-            margin-top: 15px;
-            padding: 15px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-        }
-        
-        .history-title {
-            font-size: 14px;
-            font-weight: 600;
-            margin-bottom: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            cursor: pointer;
-        }
-        
-        .history-content {
-            font-size: 12px;
-            line-height: 1.6;
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.3s ease;
-        }
-        
-        .history-content.show {
-            max-height: 300px;
-        }
-        
-        .history-item {
-            margin-bottom: 8px;
-            padding-bottom: 8px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        
-        .history-item:last-child {
-            border-bottom: none;
-            margin-bottom: 0;
-        }
-        
-        .toggle-history {
-            background: none;
-            border: none;
-            color: white;
-            cursor: pointer;
-            font-size: 12px;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-        
-        /* ============ استعلامات الوسائط ============ */
-        @media (max-width: 768px) {
-            .streak-section {
-                margin: 10px;
-                padding: 8px;
-            }
-            
-            .streak-stats {
-                flex-direction: column;
-            }
-            
-            .streak-item {
-                padding: 12px;
-            }
-            
-            .streak-number {
-                font-size: 24px;
-            }
-            
-            .card-stat {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 10px;
-            }
-            
-            .card-item {
-                padding: 15px;
-            }
-            
-            #combined-heatmap {
-                min-width: 500px;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            .header-title h2 {
-                font-size: 18px;
-            }
-            
-            .switch-item .item-link {
-                font-size: 12px;
-                padding: 8px 5px;
-            }
-            
-            .streak-title {
-                font-size: 16px;
-            }
-            
-            .streak-icon {
-                width: 35px;
-                height: 35px;
-            }
-            
-            .period-btn {
-                font-size: 12px;
-                padding: 8px 4px;
-            }
-            
-            .card-stat {
-                grid-template-columns: 1fr;
-            }
-            
-            .dis-card i {
-                font-size: 20px;
-            }
-            
-            .dis-card span {
-                font-size: 20px;
-            }
-            
-            .prayer-item {
-                font-size: 11px;
-                padding: 5px 8px;
-            }
-            
-            #combined-heatmap {
-                min-width: 400px;
-            }
-        }
-        
-        @media (max-width: 360px) {
-            .streak-number {
-                font-size: 22px;
-            }
-            
-            .prayer-item {
-                min-width: 55px;
-            }
-            
-            #combined-heatmap {
-                min-width: 350px;
-            }
-        }
-        
-        /* ============ تحسينات إضافية ============ */
-        button:active {
-            transform: scale(0.95);
-        }
-        
-        .no-data p {
-            margin: 10px 0;
-            font-size: 16px;
-        }
-    </style>
+    
+    
+    <!-- Google tag (gtag.js) -->
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-RSG9M1LGJD"></script>
+
+<script>
+
+  window.dataLayer = window.dataLayer || [];
+
+  function gtag(){dataLayer.push(arguments);}
+
+  gtag('js', new Date());
+
+  gtag('config', 'G-RSG9M1LGJD');
+
+</script>
+    
+    
+    
 </head>
 <body>
     <main>
@@ -862,7 +62,7 @@ try {
         </header>
     </main>
     
-    <section class="bar">
+    <section class="bar-section">
         <div class="switch-bar">
             <div class="switch-item">
                 <a href="statistics.php" class="item-link">للوحة التحكم</a>
@@ -992,8 +192,140 @@ try {
         <?php endif; ?>
     </section>
     
+    <!-- قسم التقرير الأسبوعي والشهري -->
+    <section class="weekly-report-section">
+        <div class="report-header">
+            <div class="report-title">
+                <i class="bi bi-bar-chart-line-fill"></i>
+                <span>تقرير الأداء</span>
+            </div>
+            <div class="report-period" id="current-period">
+                الأسبوع الحالي
+            </div>
+        </div>
+        
+        <div class="report-switcher">
+            <div class="report-tab active" data-report="weekly">
+                <i class="bi bi-calendar-week"></i>
+                الأسبوعي
+            </div>
+            <div class="report-tab" data-report="monthly">
+                <i class="bi bi-calendar-month"></i>
+                الشهري
+            </div>
+        </div>
+        
+        <!-- التقرير الأسبوعي -->
+        <div class="report-content active" id="weekly-report">
+            <?php if (!empty($weekly_report['days'])): ?>
+            <div class="weekly-bars">
+                <?php foreach ($weekly_report['days'] as $day): ?>
+                <div class="day-bar">
+                    <div class="bar-container">
+                        <div class="bar" 
+                             style="height: <?php echo $day['percentage']; ?>%; background-color: <?php echo $day['color']; ?>"
+                             title="<?php echo $day['day'] . ': ' . $day['percentage'] . '%' ?>">
+                        </div>
+                        <div class="bar-value"><?php echo round($day['percentage']); ?>%</div>
+                        <div class="bar-label"><?php echo $day['day']; ?></div>
+                    </div>
+                    <div class="day-info">
+                        <?php echo date('d/m', strtotime($day['date'])); ?>
+                        <span><?php echo $day['prayed_count']; ?>/5</span>
+                    </div>
+                </div>
+                <?php endforeach; ?>
+            </div>
+            
+            <div class="report-summary">
+                <div class="summary-item">
+                    <div class="summary-value percentage"><?php echo $weekly_report['average_percentage']; ?>%</div>
+                    <div class="summary-label">متوسط الإلتزام</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-value"><?php echo $weekly_report['total_prayed']; ?></div>
+                    <div class="summary-label">إجمالي الصلوات</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-value nawafil"><?php echo $weekly_report['total_nawafil']; ?></div>
+                    <div class="summary-label">نوافل هذا الأسبوع</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-value"><?php echo round($weekly_report['total_prayed'] / 35 * 100); ?>%</div>
+                    <div class="summary-label">نسبة الأداء</div>
+                </div>
+            </div>
+            <?php else: ?>
+            <div style="text-align: center; padding: 40px 20px;">
+                <i class="bi bi-calendar-x" style="font-size: 48px; color: #9CA3AF; margin-bottom: 20px;"></i>
+                <h3 style="color: #6B7280; margin-bottom: 10px;">لا توجد بيانات للأسبوع الحالي</h3>
+                <p style="color: #9CA3AF;">ابدأ بتسجيل صلواتك لرؤية التقرير الأسبوعي</p>
+            </div>
+            <?php endif; ?>
+        </div>
+        
+        <!-- التقرير الشهري -->
+        <div class="report-content" id="monthly-report">
+            <?php if ($monthly_report['total_days'] > 0): ?>
+            <div class="monthly-report-grid">
+                <div class="monthly-stat">
+                    <div class="monthly-value"><?php echo $monthly_report['percentage']; ?>%</div>
+                    <div class="monthly-label">نسبة الإلتزام الشهري</div>
+                    <div class="monthly-progress">
+                        <div class="monthly-progress-bar" style="width: <?php echo $monthly_report['percentage']; ?>%"></div>
+                    </div>
+                </div>
+                
+                <div class="monthly-stat">
+                    <div class="monthly-value"><?php echo $monthly_report['completed_days']; ?></div>
+                    <div class="monthly-label">يوم كامل الصلاة</div>
+                    <div class="monthly-progress">
+                        <div class="monthly-progress-bar" 
+                             style="width: <?php echo round(($monthly_report['completed_days'] / $monthly_report['total_days']) * 100); ?>%"></div>
+                    </div>
+                </div>
+                
+                <div class="monthly-stat">
+                    <div class="monthly-value" style="color: #047857;"><?php echo $monthly_report['total_nawafil']; ?></div>
+                    <div class="monthly-label">عدد النوافل</div>
+                    <div class="monthly-progress">
+                        <div class="monthly-progress-bar" 
+                             style="width: <?php echo min(100, round($monthly_report['total_nawafil'] / 20)); ?>%"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="monthly-details">
+                <div class="details-grid">
+                    <div class="detail-item">
+                        <span class="detail-label">إجمالي الصلوات</span>
+                        <span class="detail-value"><?php echo $monthly_report['total_prayed']; ?></span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">أيام الشهر</span>
+                        <span class="detail-value"><?php echo $monthly_report['total_days']; ?></span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">الحد الأقصى</span>
+                        <span class="detail-value"><?php echo $monthly_report['max_possible']; ?></span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">نسبة الإنجاز</span>
+                        <span class="detail-value"><?php echo round(($monthly_report['total_prayed'] / $monthly_report['max_possible']) * 100, 1); ?>%</span>
+                    </div>
+                </div>
+            </div>
+            <?php else: ?>
+            <div style="text-align: center; padding: 40px 20px;">
+                <i class="bi bi-calendar-x" style="font-size: 48px; color: #9CA3AF; margin-bottom: 20px;"></i>
+                <h3 style="color: #6B7280; margin-bottom: 10px;">لا توجد بيانات للشهر الحالي</h3>
+                <p style="color: #9CA3AF;">ابدأ بتسجيل صلواتك لرؤية التقرير الشهري</p>
+            </div>
+            <?php endif; ?>
+        </div>
+    </section>
+    
     <!-- قسم Heatmap -->
-        <!-- قسم Heatmap -->
     <section class="bourd" id="bourd">
         <?php if (!$pro_enabled): ?>
         <!-- عرض عند عدم تفعيل Pro -->
@@ -1081,7 +413,7 @@ try {
         <?php endif; ?>
     </section>
 
-        <!-- قسم الإحصائيات -->
+    <!-- قسم الإحصائيات -->
     <section class="statistics-if">
         <div class="cn-if">
             <div><p>إحصائيات</p></div>
@@ -1226,6 +558,10 @@ try {
         const totalCompleteDays = <?php echo $total_complete_days; ?>;
         const totalPrayerDays = <?php echo $total_prayer_days; ?>;
         
+        // بيانات التقرير الأسبوعي
+        const weeklyReport = <?php echo json_encode($weekly_report); ?>;
+        const monthlyReport = <?php echo json_encode($monthly_report); ?>;
+        
         // ============ وظائف المداومة ============
         function toggleStreakHistory() {
             const historyContent = document.getElementById('history-content');
@@ -1276,6 +612,67 @@ try {
                     setTimeout(() => {
                         item.style.transform = 'scale(1)';
                     }, 300);
+                }, index * 100);
+            });
+        }
+        
+        // ============ وظائف تقرير الأداء ============
+        function initializeReportTabs() {
+            const tabs = document.querySelectorAll('.report-tab');
+            const contents = document.querySelectorAll('.report-content');
+            const periodElement = document.getElementById('current-period');
+            
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const reportType = this.getAttribute('data-report');
+                    
+                    // تحديث التبويبات النشطة
+                    tabs.forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // تحديث المحتوى
+                    contents.forEach(content => content.classList.remove('active'));
+                    document.getElementById(`${reportType}-report`).classList.add('active');
+                    
+                    // تحديث نص الفترة
+                    if (reportType === 'weekly') {
+                        periodElement.textContent = 'الأسبوع الحالي';
+                        animateWeeklyBars();
+                    } else {
+                        const monthNames = [
+                            'يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو',
+                            'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'
+                        ];
+                        const currentDate = new Date();
+                        periodElement.textContent = `${monthNames[currentDate.getMonth()]} ${currentDate.getFullYear()}`;
+                    }
+                });
+            });
+            
+            // تشغيل الرسوم المتحركة للأعمدة
+            if (weeklyReport.days && weeklyReport.days.length > 0) {
+                setTimeout(animateWeeklyBars, 500);
+            }
+        }
+        
+        function animateWeeklyBars() {
+            const bars = document.querySelectorAll('.weekly-bars .bar');
+            bars.forEach((bar, index) => {
+                // إعادة تعيين الارتفاع للرسوم المتحركة
+                const currentHeight = bar.style.height;
+                bar.style.height = '0%';
+                
+                setTimeout(() => {
+                    bar.style.transition = 'height 1s ease-in-out';
+                    bar.style.height = currentHeight;
+                    
+                    // إضافة تأثير نبض عند اكتمال الرسوم المتحركة
+                    setTimeout(() => {
+                        bar.style.transform = 'translateX(-50%) scale(1.1)';
+                        setTimeout(() => {
+                            bar.style.transform = 'translateX(-50%) scale(1)';
+                        }, 200);
+                    }, 1000);
                 }, index * 100);
             });
         }
@@ -1462,6 +859,9 @@ try {
         document.addEventListener('DOMContentLoaded', function() {
             // تهيئة المداومة
             updateStreakDisplay();
+            
+            // تهيئة تقرير الأداء
+            initializeReportTabs();
             
             // تهيئة الرسوم البيانية
             if (heatmapSeries.length > 0) {

@@ -162,10 +162,9 @@ footer {
 }
 
 .item-foot a {
-    color: #666;
-    padding: 8px;
-    border-radius: 50%;
     transition: all 0.3s ease;
+    border-radius: 15px !important;
+    padding: 5px 15px;
 }
 
 .item-foot a:hover,

@@ -1,10 +1,11 @@
 <?php
 session_start();
 
-$host = 'localhost';
-$dbname = 'prayer_tracker';
-$username = 'root';
-$password = '';
+// إعدادات الاتصال
+$host = 'sql207.infinityfree.com';
+$dbname = 'if0_39304815_miraatalmuminif';
+$username = 'if0_39304815';
+$password = 'NIHOIGYPkLGsq0';
 
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $username, $password);

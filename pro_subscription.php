@@ -2,10 +2,11 @@
 // إعداد قاعدة البيانات والجلسة
 session_start();
 
-$host = 'localhost';
-$dbname = 'prayer_tracker';
-$username = 'root';
-$password = '';
+// إعدادات الاتصال
+$host = 'sql207.infinityfree.com';
+$dbname = 'if0_39304815_miraatalmuminif';
+$username = 'if0_39304815';
+$password = 'NIHOIGYPkLGsq0';
 
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $username, $password);
@@ -207,6 +208,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['planType'])) {
     <link rel="stylesheet" href="assets/css/pro_subscription.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200..1000&family=Tajawal:wght@200;300;400;500;700;800;900&display=swap" rel="stylesheet">
+    
+    
+    
+    <!-- Google tag (gtag.js) -->
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-RSG9M1LGJD"></script>
+
+<script>
+
+  window.dataLayer = window.dataLayer || [];
+
+  function gtag(){dataLayer.push(arguments);}
+
+  gtag('js', new Date());
+
+  gtag('config', 'G-RSG9M1LGJD');
+
+</script>
+    
+    
     <style>
         /* إضافة أنماط لحالة Pro */
         .pro-user-banner,
