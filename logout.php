@@ -7,10 +7,10 @@
 session_start();
 
 // تضمين إعدادات قاعدة البيانات
-$host = 'sql207.infinityfree.com';
-$dbname = 'if0_39304815_miraatalmuminif';
-$username = 'if0_39304815';
-$password = 'NIHOIGYPkLGsq0';
+$host = 'localhost';
+$dbname = 'miraatalmumin';
+$username = 'root';
+$password = '#';
 
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $username, $password);
