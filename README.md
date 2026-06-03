@@ -1,3 +1,4 @@
+# 🕌 مرآة المؤمن — Miraat Al-Mu'min
 
 > **Arabic:** تطبيق ويب إسلامي متكامل لمتابعة الصلوات، النوافل، الصيام، والعبادات اليومية  
 > **English:** A comprehensive Islamic web app for tracking prayers, Nawafil, fasting, and daily worship
