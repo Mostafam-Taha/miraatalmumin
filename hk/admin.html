@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Panel</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',Tahoma,sans-serif;background:#0d1117;color:#c9d1d9;min-height:100vh}
+
+/* LOGIN */
+#login{display:flex;align-items:center;justify-content:center;height:100vh}
+.login-box{background:#161b22;border:1px solid #30363d;border-radius:12px;padding:36px;width:340px}
+.login-box h2{text-align:center;color:#58a6ff;margin-bottom:24px;font-size:20px}
+.login-box input{width:100%;padding:11px 14px;background:#0d1117;border:1px solid #30363d;border-radius:8px;color:#c9d1d9;font-size:15px;margin-bottom:12px;outline:none}
+.login-box input:focus{border-color:#58a6ff}
+.btn-login{width:100%;padding:11px;background:#238636;border:none;border-radius:8px;color:#fff;font-size:15px;font-weight:600;cursor:pointer}
+.btn-login:hover{background:#2ea043}
+.err{color:#f85149;font-size:13px;text-align:center;margin-top:8px;min-height:18px}
+
+/* MAIN */
+#main{display:none}
+.topbar{background:#161b22;border-bottom:1px solid #30363d;padding:14px 24px;display:flex;align-items:center;gap:10px}
+.topbar-title{font-size:17px;font-weight:700;color:#58a6ff}
+.topbar-user{margin-right:auto;font-size:13px;color:#8b949e}
+
+.page{padding:24px;max-width:1200px;margin:0 auto}
+
+/* STATS */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:16px;margin-bottom:24px}
+.stat{background:#161b22;border:1px solid #30363d;border-radius:10px;padding:20px;text-align:center}
+.stat .n{font-size:34px;font-weight:700;color:#58a6ff}
+.stat .l{font-size:12px;color:#8b949e;margin-top:4px;text-transform:uppercase;letter-spacing:.5px}
+
+/* CHART */
+.card{background:#161b22;border:1px solid #30363d;border-radius:10px;padding:20px;margin-bottom:24px}
+.card h3{font-size:13px;color:#8b949e;text-transform:uppercase;letter-spacing:.5px;margin-bottom:16px}
+
+/* TABLE */
+.tbl-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px}
+thead th{background:#0d1117;color:#8b949e;padding:10px 14px;text-align:right;font-weight:600;white-space:nowrap}
+tbody td{padding:10px 14px;border-bottom:1px solid #21262d;vertical-align:middle;white-space:nowrap}
+tbody tr:hover td{background:#1c2128}
+code{background:#0d1117;padding:2px 7px;border-radius:5px;font-size:12px;color:#79c0ff}
+
+.badge{display:inline-block;padding:3px 9px;border-radius:6px;font-size:12px;font-weight:600}
+.badge-active{background:#0d4429;color:#3fb950}
+.badge-banned{background:#490202;color:#f85149}
+
+.btn-ban{background:#b91c1c;color:#fff;border:none;padding:5px 12px;border-radius:6px;font-size:12px;cursor:pointer;font-weight:600}
+.btn-ban:hover{background:#991b1b}
+.btn-unban{background:#166534;color:#fff;border:none;padding:5px 12px;border-radius:6px;font-size:12px;cursor:pointer;font-weight:600}
+.btn-unban:hover{background:#14532d}
+button:disabled{opacity:.5;cursor:not-allowed}
+
+/* TOAST */
+.toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#238636;color:#fff;padding:10px 22px;border-radius:8px;font-size:14px;font-weight:600;opacity:0;transition:opacity .3s;pointer-events:none;z-index:999}
+.toast.show{opacity:1}
+.toast.err-toast{background:#b91c1c}
+
+/* LOADING */
+.loading{text-align:center;padding:40px;color:#8b949e;font-size:14px}
+</style>
+</head>
+<body>
+
+<div class="toast" id="toast"></div>
+
+<!-- LOGIN -->
+<div id="login">
+  <div class="login-box">
+    <h2>🔐 Admin Panel</h2>
+    <input type="text" id="api-url" placeholder="رابط ban.php (مثال: https://site.com/ban.php)">
+    <input type="password" id="api-key" placeholder="Secret Key" onkeydown="if(event.key==='Enter')doLogin()">
+    <button class="btn-login" onclick="doLogin()">دخول</button>
+    <div class="err" id="login-err"></div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div id="main">
+  <div class="topbar">
+    <span>🛡️</span>
+    <span class="topbar-title">Admin Panel — E2EE Chat</span>
+    <span class="topbar-user" id="tb-info"></span>
+  </div>
+
+  <div class="page">
+    <!-- إحصائيات -->
+    <div class="stats">
+      <div class="stat"><div class="n" id="s-users">-</div><div class="l">المستخدمين</div></div>
+      <div class="stat"><div class="n" id="s-msg">-</div><div class="l">الرسائل</div></div>
+      <div class="stat"><div class="n" id="s-files">-</div><div class="l">الملفات</div></div>
+      <div class="stat"><div class="n" id="s-banned" style="color:#f85149">-</div><div class="l">محظور</div></div>
+    </div>
+
+    <!-- رسم بياني -->
+    <div class="card">
+      <h3>📊 رسائل آخر 7 أيام</h3>
+      <canvas id="chart" height="80"></canvas>
+    </div>
+
+    <!-- جدول المستخدمين -->
+    <div class="card">
+      <h3>👥 المستخدمين</h3>
+      <div class="tbl-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>اسم المستخدم</th>
+              <th>البريد</th>
+              <th>IP التسجيل</th>
+              <th>IP آخر دخول</th>
+              <th>آخر دخول</th>
+              <th>تاريخ الإنشاء</th>
+              <th>الحالة</th>
+              <th>إجراء</th>
+            </tr>
+          </thead>
+          <tbody id="tbody">
+            <tr><td colspan="9" class="loading">جاري التحميل...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+let API_URL = '';
+let API_KEY = '';
+let chartInst = null;
+
+function toast(msg, isErr=false) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show' + (isErr ? ' err-toast' : '');
+  setTimeout(()=>t.className='toast', 2800);
+}
+
+async function api(action, extra={}) {
+  const res = await fetch(API_URL, {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({key: API_KEY, action, ...extra})
+  });
+  return res.json();
+}
+
+async function doLogin() {
+  const url = document.getElementById('api-url').value.trim();
+  const key = document.getElementById('api-key').value.trim();
+  if (!url || !key) { document.getElementById('login-err').textContent = 'أدخل الرابط والكلمة السرية'; return; }
+
+  document.getElementById('login-err').textContent = '';
+  API_URL = url;
+  API_KEY = key;
+
+  try {
+    const data = await api('stats');
+    if (!data.success) {
+      document.getElementById('login-err').textContent = data.error || 'خطأ في الدخول';
+      return;
+    }
+    document.getElementById('login').style.display = 'none';
+    document.getElementById('main').style.display = 'block';
+    renderAll(data);
+  } catch(e) {
+    document.getElementById('login-err').textContent = 'فشل الاتصال بالسيرفر';
+  }
+}
+
+function renderAll(data) {
+  document.getElementById('s-users').textContent  = data.users.length;
+  document.getElementById('s-msg').textContent    = data.total_messages;
+  document.getElementById('s-files').textContent  = data.total_files;
+  document.getElementById('s-banned').textContent = data.banned_count;
+  document.getElementById('tb-info').textContent  = `${data.users.length} مستخدم`;
+
+  // رسم بياني
+  const labels = data.msg_chart.map(r=>r.day);
+  const counts = data.msg_chart.map(r=>parseInt(r.cnt));
+  if (chartInst) chartInst.destroy();
+  chartInst = new Chart(document.getElementById('chart'), {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [{label:'رسائل', data:counts, backgroundColor:'#1f6feb', borderRadius:5}]
+    },
+    options: {
+      plugins:{legend:{display:false}},
+      scales:{
+        x:{ticks:{color:'#8b949e'}, grid:{color:'#21262d'}},
+        y:{ticks:{color:'#8b949e'}, grid:{color:'#21262d'}, beginAtZero:true}
+      }
+    }
+  });
+
+  // جدول
+  const tbody = document.getElementById('tbody');
+  if (!data.users.length) {
+    tbody.innerHTML = '<tr><td colspan="9" class="loading">لا يوجد مستخدمين</td></tr>';
+    return;
+  }
+  tbody.innerHTML = data.users.map(u => `
+    <tr id="row-${u.id}">
+      <td>${u.id}</td>
+      <td><strong>${esc(u.username)}</strong></td>
+      <td>${esc(u.email)}</td>
+      <td><code>${esc(u.registration_ip||'-')}</code></td>
+      <td><code>${esc(u.last_login_ip||'-')}</code></td>
+      <td>${u.last_login_at||'-'}</td>
+      <td>${u.created_at||'-'}</td>
+      <td><span class="badge ${u.is_banned==1?'badge-banned':'badge-active'}">${u.is_banned==1?'محظور':'نشط'}</span></td>
+      <td>
+        ${u.is_banned==1
+          ? `<button class="btn-unban" onclick="doUnban(${u.id},this)">فك الحظر</button>`
+          : `<button class="btn-ban" onclick="doBan(${u.id},this)">حظر</button>`}
+      </td>
+    </tr>
+  `).join('');
+}
+
+async function doBan(uid, btn) {
+  if (!confirm('هل تريد حظر هذا المستخدم بالـ IP؟')) return;
+  btn.disabled = true;
+  try {
+    const data = await api('ban', {user_id: uid});
+    if (data.success) {
+      toast('✅ تم الحظر — IP: ' + data.banned_ip);
+      refreshTable();
+    } else {
+      toast(data.error || 'فشل الحظر', true);
+      btn.disabled = false;
+    }
+  } catch(e) {
+    toast('خطأ في الاتصال', true);
+    btn.disabled = false;
+  }
+}
+
+async function doUnban(uid, btn) {
+  btn.disabled = true;
+  try {
+    const data = await api('unban', {user_id: uid});
+    if (data.success) {
+      toast('✅ تم فك الحظر');
+      refreshTable();
+    } else {
+      toast(data.error || 'فشل فك الحظر', true);
+      btn.disabled = false;
+    }
+  } catch(e) {
+    toast('خطأ في الاتصال', true);
+    btn.disabled = false;
+  }
+}
+
+async function refreshTable() {
+  try {
+    const data = await api('stats');
+    if (data.success) renderAll(data);
+  } catch(e) {}
+}
+
+function esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+</script>
+</body>
+</html>
